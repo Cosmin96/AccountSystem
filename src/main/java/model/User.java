@@ -1,7 +1,5 @@
 package model;
 
-import java.util.List;
-
 public class User {
     private Long id;
     private String username;
@@ -53,5 +51,15 @@ public class User {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                '}';
     }
 }

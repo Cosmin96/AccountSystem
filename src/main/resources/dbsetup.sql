@@ -5,4 +5,9 @@ FirstName VARCHAR(50) NOT NULL,
 LastName VARCHAR(50) NOT NULL
 );
 
-INSERT INTO User (UserName, FirstName, LastName) VALUES ('bcos96','Cosmin', 'Bresug');
+CREATE TABLE User (
+Id LONG PRIMARY KEY AUTO_INCREMENT NOT NULL,
+Balance LONG NOT NULL,
+OwnerID LONG NOT NULL,
+Currency VARCHAR(50) NOT NULL
+);

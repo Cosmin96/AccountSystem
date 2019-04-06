@@ -21,7 +21,7 @@ public class UserRepository {
             rs = stmt.executeQuery();
             return queryForUser(rs, users);
         } catch (SQLException e) {
-            throw new Exception("Error reading user data", e);
+            throw new Exception("Error reading user", e);
         } finally {
             DbUtils.closeQuietly(conn, stmt, rs);
         }
@@ -39,7 +39,7 @@ public class UserRepository {
             rs = stmt.executeQuery();
             return queryForUser(rs, users);
         } catch (SQLException e) {
-            throw new Exception("Error reading user data", e);
+            throw new Exception("Error reading user", e);
         } finally {
             DbUtils.closeQuietly(conn, stmt, rs);
         }
@@ -57,16 +57,16 @@ public class UserRepository {
             stmt.setString(3, user.getLastName());
             int affectedRows = stmt.executeUpdate();
             if (affectedRows == 0) {
-                throw new Exception("Users Cannot be created");
+                throw new Exception("User not created");
             }
             generatedKeys = stmt.getGeneratedKeys();
             if (generatedKeys.next()) {
                 return generatedKeys.getLong(1);
             } else {
-                throw new Exception("Users Cannot be created");
+                throw new Exception("User not created");
             }
         } catch (SQLException e) {
-            throw new Exception("Error creating user data", e);
+            throw new Exception("Error creating user", e);
         } finally {
             DbUtils.closeQuietly(conn, stmt, generatedKeys);
         }

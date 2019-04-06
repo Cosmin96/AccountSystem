@@ -1,34 +1,37 @@
 package web;
 
-import jdk.nashorn.internal.objects.NativeJSON;
 import model.User;
 import repository.UserRepository;
+import service.UserService;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.util.ArrayList;
 import java.util.List;
 
 @Path("/user")
 public class UserController {
 
+    private final UserService userService;
+
+    public UserController(final UserService userService) {
+        this.userService = userService;
+    }
+
     @GET
     @Path("/get/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<User> available(@PathParam("id") Long id) throws Exception {
-        UserRepository userRepo = new UserRepository();
+    public List<User> getUsers(@PathParam("id") Long id) throws Exception {
         if(id != null) {
-            return userRepo.getUser(id);
+            return this.userService.getUser(id);
         }
-        return userRepo.getAllUsers();
+        return this.userService.getAllUsers();
     }
 
     @POST
     @Path("/add")
     @Consumes(MediaType.APPLICATION_JSON)
     public String addUser(User user) throws Exception {
-        UserRepository userRepo = new UserRepository();
-        userRepo.addUser(user);
+        this.userService.addUser(user);
         return "User added successfully";
     }
 }
