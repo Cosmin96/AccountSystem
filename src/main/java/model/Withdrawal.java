@@ -4,7 +4,7 @@ public class Withdrawal extends Transaction {
     private Long fromAccount;
 
     public Withdrawal(Long fromAccount, Double amount, String currency) {
-        super(amount, currency, "withdrawal");
+        super(amount, currency, "Withdrawal");
         this.fromAccount = fromAccount;
     }
 

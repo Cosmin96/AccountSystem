@@ -1,10 +1,8 @@
 package service;
 
-import model.Account;
-import model.Deposit;
-import model.Transfer;
-import model.Withdrawal;
+import model.*;
 import repository.AccountRepository;
+import repository.TransactionRepository;
 
 import java.util.List;
 
@@ -19,6 +17,18 @@ public class AccountServiceImpl implements AccountService {
 
     public List<Account> getAccounts(Long userId) throws Exception {
         return new AccountRepository().getAccounts(userId);
+    }
+
+    public List<Transaction> getTransaction(Long transactionId) throws Exception {
+        return new TransactionRepository().getTransaction(transactionId);
+    }
+
+    public List<Transaction> getAllTransactions() throws Exception {
+        return new TransactionRepository().getAllTransactions();
+    }
+
+    public void saveTransaction(Transaction transaction) throws Exception {
+        new TransactionRepository().saveTransaction(transaction);
     }
 
     public void addAccount(Account account) throws Exception {
@@ -36,18 +46,19 @@ public class AccountServiceImpl implements AccountService {
         if (!transaction.getCurrency().equals(account.getCurrency())) {
             throw new Exception("Withdrawal not possible due to currency mismatch");
         }
-        new AccountRepository().updateAccount(account.getId(), account.getBalance() - transaction.getAmount());
+        updateAccount(account.getId(), account.getBalance() - transaction.getAmount());
+        saveTransaction(transaction);
     }
 
     public void depositMoney(Account account, Deposit transaction) throws Exception {
         if (!transaction.getCurrency().equals(account.getCurrency())) {
             throw new Exception("Deposit not possible due to currency mismatch");
         }
-        new AccountRepository().updateAccount(account.getId(), account.getBalance() + transaction.getAmount());
+       updateAccount(account.getId(), account.getBalance() + transaction.getAmount());
+        saveTransaction(transaction);
     }
 
     public void transferMoney(Account fromAccount, Account toAccount, Transfer transaction) throws  Exception {
-        AccountRepository accountRepository = new AccountRepository();
         if (transaction.getAmount() > fromAccount.getBalance()) {
             throw new Exception("Withdrawal not possible");
         }
@@ -56,10 +67,11 @@ public class AccountServiceImpl implements AccountService {
         }
         if (!transaction.getCurrency().equals(toAccount.getCurrency())) {
             toAccount = lookForCorrectAccount(toAccount.getOwnerId(), transaction.getCurrency());
-            accountRepository.addAccount(toAccount);
+            addAccount(toAccount);
         }
-        accountRepository.updateAccount(fromAccount.getId(), fromAccount.getBalance() - transaction.getAmount());
-        accountRepository.updateAccount(toAccount.getId(), toAccount.getBalance() + transaction.getAmount());
+        updateAccount(fromAccount.getId(), fromAccount.getBalance() - transaction.getAmount());
+        updateAccount(toAccount.getId(), toAccount.getBalance() + transaction.getAmount());
+        saveTransaction(transaction);
     }
 
     private Account lookForCorrectAccount(Long id, String currency) throws Exception {

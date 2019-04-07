@@ -1,19 +1,25 @@
 package web;
 
-import model.Account;
-import model.Deposit;
-import model.Transfer;
-import model.Withdrawal;
+import model.*;
 import service.AccountService;
 import service.AccountServiceImpl;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.util.List;
 
 @Path("/transaction")
 public class TransactionController {
+
+    @GET
+    @Path("/get/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Transaction> getTransactions(@PathParam("id") Long id) throws Exception {
+        if(id != null) {
+            return new AccountServiceImpl().getAllTransactions();
+        }
+        return new AccountServiceImpl().getTransaction(id);
+    }
 
     @POST
     @Path("/withdraw")
