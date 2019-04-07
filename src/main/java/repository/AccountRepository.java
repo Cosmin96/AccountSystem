@@ -46,7 +46,7 @@ public class AccountRepository {
         }
     }
 
-    public Long addAccount(String currency, Long userId) throws Exception {
+    public Long addAccount(Account account) throws Exception {
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet generatedKeys = null;
@@ -54,8 +54,8 @@ public class AccountRepository {
             conn = DatabaseConnection.getDBConnection();
             stmt = conn.prepareStatement(Configuration.getStringProperty("ADD_ACCOUNT"), Statement.RETURN_GENERATED_KEYS);
             stmt.setDouble(1, 0);
-            stmt.setLong(2, userId);
-            stmt.setString(3, currency);
+            stmt.setLong(2, account.getOwnerId());
+            stmt.setString(3, account.getCurrency());
             int affectedRows = stmt.executeUpdate();
             if (affectedRows == 0) {
                 throw new Exception("Account not created");

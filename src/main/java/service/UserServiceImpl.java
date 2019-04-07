@@ -7,22 +7,17 @@ import java.util.List;
 
 public class UserServiceImpl implements UserService {
 
-
-    private final UserRepository userRepository;
-
-    public UserServiceImpl(final UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    public UserServiceImpl() { }
 
     public List<User> getAllUsers() throws Exception {
-        return this.userRepository.getAllUsers();
+        return new UserRepository().getAllUsers();
     }
 
     public List<User> getUser(Long id) throws Exception {
-        return this.userRepository.getUser(id);
+        return new UserRepository().getUser(id);
     }
 
     public void addUser(User user) throws Exception {
-        this.userRepository.addUser(user);
+        new UserRepository().addUser(user);
     }
 }
