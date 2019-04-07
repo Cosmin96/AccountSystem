@@ -73,6 +73,27 @@ public class AccountRepository {
         }
     }
 
+    public void updateAccount(Long id, Double balance) throws Exception {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet generatedKeys = null;
+        try {
+            conn = DatabaseConnection.getDBConnection();
+            stmt = conn.prepareStatement(Configuration.getStringProperty("UPDATE_ACCOUNT"));
+            stmt.setDouble(1, balance);
+            stmt.setLong(2, id);
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows == 0) {
+                throw new Exception("Account not created");
+            }
+        } catch (SQLException e) {
+            throw new Exception("Error creating account", e);
+        } finally {
+            DbUtils.closeQuietly(conn);
+            DbUtils.closeQuietly(stmt);
+        }
+    }
+
     private List<Account> queryForAccount(ResultSet rs, List<Account> accounts) throws Exception {
         while (rs.next()) {
             Account account = new Account(rs.getLong("Id"), rs.getDouble("Balance"), rs.getLong("OwnerID"), rs.getString("Currency"));
