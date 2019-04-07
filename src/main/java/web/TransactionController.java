@@ -15,10 +15,14 @@ public class TransactionController {
     @Path("/get/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Transaction> getTransactions(@PathParam("id") Long id) throws Exception {
-        if(id != null) {
-            return new AccountServiceImpl().getAllTransactions();
-        }
         return new AccountServiceImpl().getTransaction(id);
+    }
+
+    @GET
+    @Path("/get")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Transaction> getAllTransactions() throws Exception {
+        return new AccountServiceImpl().getAllTransactions();
     }
 
     @POST

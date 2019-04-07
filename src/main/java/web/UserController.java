@@ -14,9 +14,13 @@ public class UserController {
     @Path("/get/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public List<User> getUsers(@PathParam("id") Long id) throws Exception {
-        if(id != null) {
-            return new UserServiceImpl().getUser(id);
-        }
+        return new UserServiceImpl().getUser(id);
+    }
+
+    @GET
+    @Path("/get")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<User> getAllUsers() throws Exception {
         return new UserServiceImpl().getAllUsers();
     }
 

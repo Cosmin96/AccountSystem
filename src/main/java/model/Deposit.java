@@ -8,6 +8,11 @@ public class Deposit extends Transaction {
         this.toAccount = toAccount;
     }
 
+    public Deposit(Long id, Long toAccount, Double amount, String currency) {
+        super(id, amount, currency, "Deposit");
+        this.toAccount = toAccount;
+    }
+
     public Deposit() {}
 
     public Long getToAccount() {

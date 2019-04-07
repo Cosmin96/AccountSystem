@@ -15,6 +15,13 @@ public abstract class Transaction {
         this.type = type;
     }
 
+    public Transaction(Long id, Double amount, String currency, String type) {
+        this.id = id;
+        this.amount = amount;
+        this.currency = currency;
+        this.type = type;
+    }
+
     public Long getId() {
         return id;
     }

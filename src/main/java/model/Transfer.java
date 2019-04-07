@@ -10,6 +10,12 @@ public class Transfer extends Transaction {
         this.toAccount = toAccount;
     }
 
+    public Transfer(Long id, Long fromAccount, Long toAccount, Double amount, String currency) {
+        super(id, amount, currency, "Transfer");
+        this.fromAccount = fromAccount;
+        this.toAccount = toAccount;
+    }
+
     public Transfer() {}
 
     public Long getFromAccount() {

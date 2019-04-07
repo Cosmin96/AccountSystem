@@ -55,7 +55,8 @@ public class TransactionRepository {
 
         try {
             conn = DatabaseConnection.getDBConnection();
-            stmt = prepareQuery(transaction, conn);
+            stmt = conn.prepareStatement(Configuration.getStringProperty("ADD_TRANSACTION"), Statement.RETURN_GENERATED_KEYS);
+            prepareQuery(transaction, stmt);
             int affectedRows = stmt.executeUpdate();
             if (affectedRows == 0) {
                 throw new Exception("Transaction not created");
@@ -78,37 +79,50 @@ public class TransactionRepository {
             String type = rs.getString("Type");
             Transaction transaction = null;
             if(type.equals("Deposit")) {
-                transaction = new Deposit(rs.getLong("ToAccount"), rs.getDouble("Amount"), rs.getString("Currency"));
+                transaction = new Deposit(
+                        rs.getLong("Id"),
+                        rs.getLong("ToAccount"),
+                        rs.getDouble("Amount"),
+                        rs.getString("Currency")
+                );
             } else if(type.equals("Withdrawal")) {
-                transaction = new Withdrawal(rs.getLong("FromAccount"), rs.getDouble("Amount"), rs.getString("Currency"));
+                transaction = new Withdrawal(
+                        rs.getLong("Id"),
+                        rs.getLong("FromAccount"),
+                        rs.getDouble("Amount"),
+                        rs.getString("Currency")
+                );
             } else if(type.equals("Transfer")){
-                transaction = new Transfer(rs.getLong("FromAccount"), rs.getLong("ToAccount"), rs.getDouble("Amount"), rs.getString("Currency"));
+                transaction = new Transfer(
+                        rs.getLong("Id"),
+                        rs.getLong("FromAccount"),
+                        rs.getLong("ToAccount"),
+                        rs.getDouble("Amount"),
+                        rs.getString("Currency")
+                );
             }
             transactions.add(transaction);
         }
         return transactions;
     }
 
-    private PreparedStatement prepareQuery(Transaction transaction, Connection conn) throws Exception {
-        PreparedStatement stmt = conn.prepareStatement(Configuration.getStringProperty("ADD_TRANSACTION"), Statement.RETURN_GENERATED_KEYS);
-
+    private void prepareQuery(Transaction transaction, PreparedStatement stmt) throws Exception {
         stmt.setString(1, transaction.getType());
         stmt.setDouble(4, transaction.getAmount());
         stmt.setString(5, transaction.getCurrency());
 
-        if(transaction.getType().equals("Deposit")) {
+        if (transaction.getType().equals("Deposit")) {
             stmt.setLong(2, -1);
             stmt.setLong(3, ((Deposit) transaction).getToAccount());
-        } else if(transaction.getType().equals("Withdrawal")) {
+        } else if (transaction.getType().equals("Withdrawal")) {
             stmt.setLong(2, ((Withdrawal) transaction).getFromAccount());
             stmt.setLong(3, -1);
-        } else if(transaction.getType().equals("Transfer")){
+        } else if (transaction.getType().equals("Transfer")) {
             stmt.setLong(2, ((Transfer) transaction).getFromAccount());
             stmt.setLong(3, ((Transfer) transaction).getToAccount());
         } else {
             stmt.setLong(2, -1);
             stmt.setLong(3, -1);
         }
-        return stmt;
     }
 }

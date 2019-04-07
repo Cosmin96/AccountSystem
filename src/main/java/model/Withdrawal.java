@@ -8,6 +8,11 @@ public class Withdrawal extends Transaction {
         this.fromAccount = fromAccount;
     }
 
+    public Withdrawal(Long id, Long fromAccount, Double amount, String currency) {
+        super(id, amount, currency, "Withdrawal");
+        this.fromAccount = fromAccount;
+    }
+
     public Withdrawal() {
     }
 
