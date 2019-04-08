@@ -1,16 +1,18 @@
 package repository;
 
 import config.Configuration;
+import exception.CustomException;
 import model.Account;
 import org.apache.commons.dbutils.DbUtils;
 
+import javax.ws.rs.core.Response;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class AccountRepository {
 
-    public List<Account> getAccount(Long accountId) throws Exception {
+    public List<Account> getAccount(Long accountId) throws CustomException {
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -22,13 +24,13 @@ public class AccountRepository {
             rs = stmt.executeQuery();
             return queryForAccount(rs, accounts);
         } catch (SQLException e) {
-            throw new Exception("Error reading account", e);
+            throw new CustomException(Response.Status.BAD_REQUEST, "Account query failed");
         } finally {
             DbUtils.closeQuietly(conn, stmt, rs);
         }
     }
 
-    public List<Account> getAccounts(Long userId) throws Exception {
+    public List<Account> getAccounts(Long userId) throws CustomException {
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -40,13 +42,13 @@ public class AccountRepository {
             rs = stmt.executeQuery();
             return queryForAccount(rs, accounts);
         } catch (SQLException e) {
-            throw new Exception("Error reading account", e);
+            throw new CustomException(Response.Status.BAD_REQUEST, "Account query failed");
         } finally {
             DbUtils.closeQuietly(conn, stmt, rs);
         }
     }
 
-    public Long addAccount(Account account) throws Exception {
+    public Long addAccount(Account account) throws CustomException {
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet generatedKeys = null;
@@ -58,22 +60,22 @@ public class AccountRepository {
             stmt.setString(3, account.getCurrency());
             int affectedRows = stmt.executeUpdate();
             if (affectedRows == 0) {
-                throw new Exception("Account not created");
+                throw new CustomException(Response.Status.BAD_REQUEST, "Account not created");
             }
             generatedKeys = stmt.getGeneratedKeys();
             if (generatedKeys.next()) {
                 return generatedKeys.getLong(1);
             } else {
-                throw new Exception("Account not created");
+                throw new CustomException(Response.Status.BAD_REQUEST, "Account not created");
             }
         } catch (SQLException e) {
-            throw new Exception("Error creating account", e);
+            throw new CustomException(Response.Status.BAD_REQUEST, "Account not created");
         } finally {
             DbUtils.closeQuietly(conn, stmt, generatedKeys);
         }
     }
 
-    public void updateAccount(Long id, Double balance) throws Exception {
+    public void updateAccount(Long id, Double balance) throws CustomException {
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet generatedKeys = null;
@@ -84,17 +86,17 @@ public class AccountRepository {
             stmt.setLong(2, id);
             int affectedRows = stmt.executeUpdate();
             if (affectedRows == 0) {
-                throw new Exception("Account not created");
+                throw new CustomException(Response.Status.BAD_REQUEST, "Account not updated");
             }
         } catch (SQLException e) {
-            throw new Exception("Error creating account", e);
+            throw new CustomException(Response.Status.BAD_REQUEST, "Account not updated");
         } finally {
             DbUtils.closeQuietly(conn);
             DbUtils.closeQuietly(stmt);
         }
     }
 
-    private List<Account> queryForAccount(ResultSet rs, List<Account> accounts) throws Exception {
+    private List<Account> queryForAccount(ResultSet rs, List<Account> accounts) throws SQLException {
         while (rs.next()) {
             Account account = new Account(rs.getLong("Id"), rs.getDouble("Balance"), rs.getLong("OwnerID"), rs.getString("Currency"));
             accounts.add(account);

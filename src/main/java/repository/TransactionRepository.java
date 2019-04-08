@@ -1,19 +1,21 @@
 package repository;
 
 import config.Configuration;
+import exception.CustomException;
 import model.Deposit;
 import model.Transaction;
 import model.Transfer;
 import model.Withdrawal;
 import org.apache.commons.dbutils.DbUtils;
 
+import javax.ws.rs.core.Response;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TransactionRepository {
 
-    public List<Transaction> getTransaction(Long transactionId) throws Exception {
+    public List<Transaction> getTransaction(Long transactionId) throws CustomException {
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -25,13 +27,13 @@ public class TransactionRepository {
             rs = stmt.executeQuery();
             return queryForTransaction(rs, transactions);
         } catch (SQLException e) {
-            throw new Exception("Error reading transaction", e);
+            throw new CustomException(Response.Status.BAD_REQUEST, "Transaction query failed");
         } finally {
             DbUtils.closeQuietly(conn, stmt, rs);
         }
     }
 
-    public List<Transaction> getAllTransactions() throws Exception {
+    public List<Transaction> getAllTransactions() throws CustomException {
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -42,13 +44,13 @@ public class TransactionRepository {
             rs = stmt.executeQuery();
             return queryForTransaction(rs, transactions);
         } catch (SQLException e) {
-            throw new Exception("Error reading transaction", e);
+            throw new CustomException(Response.Status.BAD_REQUEST, "Transaction query failed");
         } finally {
             DbUtils.closeQuietly(conn, stmt, rs);
         }
     }
 
-    public Long saveTransaction(Transaction transaction) throws Exception {
+    public Long saveTransaction(Transaction transaction) throws CustomException {
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet generatedKeys = null;
@@ -59,22 +61,22 @@ public class TransactionRepository {
             prepareQuery(transaction, stmt);
             int affectedRows = stmt.executeUpdate();
             if (affectedRows == 0) {
-                throw new Exception("Transaction not created");
+                throw new CustomException(Response.Status.BAD_REQUEST, "Transaction not created");
             }
             generatedKeys = stmt.getGeneratedKeys();
             if (generatedKeys.next()) {
                 return generatedKeys.getLong(1);
             } else {
-                throw new Exception("Transaction not created");
+                throw new CustomException(Response.Status.BAD_REQUEST, "Transaction not created");
             }
         } catch (SQLException e) {
-            throw new Exception("Error creating Transaction", e);
+            throw new CustomException(Response.Status.BAD_REQUEST, "Transaction not created");
         } finally {
             DbUtils.closeQuietly(conn, stmt, generatedKeys);
         }
     }
 
-    private List<Transaction> queryForTransaction(ResultSet rs, List<Transaction> transactions) throws Exception {
+    private List<Transaction> queryForTransaction(ResultSet rs, List<Transaction> transactions) throws SQLException {
         while (rs.next()) {
             String type = rs.getString("Type");
             Transaction transaction = null;
@@ -106,7 +108,7 @@ public class TransactionRepository {
         return transactions;
     }
 
-    private void prepareQuery(Transaction transaction, PreparedStatement stmt) throws Exception {
+    private void prepareQuery(Transaction transaction, PreparedStatement stmt) throws SQLException {
         stmt.setString(1, transaction.getType());
         stmt.setDouble(4, transaction.getAmount());
         stmt.setString(5, transaction.getCurrency());
