@@ -5,36 +5,42 @@ import model.*;
 import repository.AccountRepository;
 import repository.TransactionRepository;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
+@Singleton
 public class AccountServiceImpl implements AccountService {
 
-    public AccountServiceImpl() { }
+    @Inject
+    AccountRepository accountRepository;
+    @Inject
+    TransactionRepository transactionRepository;
 
     public List<Account> getAccount(Long accountId) throws CustomException {
-        return new AccountRepository().getAccount(accountId);
+        return accountRepository.getAccount(accountId);
     }
 
 
     public List<Account> getAccounts(Long userId) throws CustomException {
-        return new AccountRepository().getAccounts(userId);
+        return accountRepository.getAccounts(userId);
     }
 
     public List<Transaction> getTransaction(Long transactionId) throws CustomException {
-        return new TransactionRepository().getTransaction(transactionId);
+        return transactionRepository.getTransaction(transactionId);
     }
 
     public List<Transaction> getAllTransactions() throws CustomException {
-        return new TransactionRepository().getAllTransactions();
+        return transactionRepository.getAllTransactions();
     }
 
     public void saveTransaction(Transaction transaction) throws CustomException {
-        new TransactionRepository().saveTransaction(transaction);
+        transactionRepository.saveTransaction(transaction);
     }
 
     public void addAccount(Account account) throws CustomException {
-        new AccountRepository().addAccount(account);
+        accountRepository.addAccount(account);
     }
 
     public void withdrawMoney(Account account, Withdrawal transaction) throws CustomException {
@@ -72,7 +78,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     private void updateAccount(Long id, Double amount) throws CustomException {
-        new AccountRepository().updateAccount(id, amount);
+        accountRepository.updateAccount(id, amount);
     }
 
     private Account lookForCorrectAccount(Long id, String currency) throws CustomException {

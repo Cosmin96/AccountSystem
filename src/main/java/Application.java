@@ -1,7 +1,9 @@
+import config.ApplicationBinder;
 import org.apache.commons.dbutils.DbUtils;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletContainer;
 import org.h2.tools.RunScript;
 import repository.DatabaseConnection;
@@ -18,17 +20,16 @@ public class Application {
     }
 
     private static void startServer() throws Exception {
+        ResourceConfig config = new ResourceConfig();
+        config.packages("web");
+        config.register(new ApplicationBinder());
+        ServletHolder jerseyServlet
+                = new ServletHolder(new ServletContainer(config));
+
         Server server = new Server(8080);
-
-        ServletContextHandler ctx =
-                new ServletContextHandler(ServletContextHandler.NO_SESSIONS);
-
-        ctx.setContextPath("/");
-        server.setHandler(ctx);
-
-        ServletHolder serHol = ctx.addServlet(ServletContainer.class, "/*");
-        serHol.setInitOrder(1);
-        serHol.setInitParameter("jersey.config.server.provider.packages", "web");
+        ServletContextHandler context
+                = new ServletContextHandler(server, "/");
+        context.addServlet(jerseyServlet, "/*");
 
         try {
             server.start();
@@ -46,7 +47,7 @@ public class Application {
             conn = DatabaseConnection.getDBConnection();
             String setupFile = Thread.currentThread()
                     .getContextClassLoader()
-                    .getResource("dbsetup.sql")
+                    .getResource("dbSetup.sql")
                     .getFile();
             RunScript.execute(conn, new FileReader(setupFile));
         } catch (SQLException e) {

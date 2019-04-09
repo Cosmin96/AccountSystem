@@ -5,6 +5,7 @@ import model.*;
 import service.AccountService;
 import service.AccountServiceImpl;
 
+import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -13,18 +14,21 @@ import java.util.List;
 @Path("/transaction")
 public class TransactionController {
 
+    @Inject
+    AccountService accountService;
+
     @GET
     @Path("/get/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Transaction> getTransactions(@PathParam("id") Long id) throws CustomException {
-        return new AccountServiceImpl().getTransaction(id);
+        return accountService.getTransaction(id);
     }
 
     @GET
     @Path("/get")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Transaction> getAllTransactions() throws CustomException {
-        return new AccountServiceImpl().getAllTransactions();
+        return accountService.getAllTransactions();
     }
 
     @POST
@@ -32,7 +36,6 @@ public class TransactionController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response withdrawMoney(Withdrawal transaction) throws CustomException {
-        AccountService accountService = new AccountServiceImpl();
         List<Account> accounts = accountService.getAccount(transaction.getFromAccount());
 
         if(accounts.size() == 0) {
@@ -51,7 +54,6 @@ public class TransactionController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response depositMoney(Deposit transaction) throws CustomException {
-        AccountService accountService = new AccountServiceImpl();
         List<Account> accounts = accountService.getAccount(transaction.getToAccount());
 
         if(accounts.size() == 0) {
@@ -70,7 +72,6 @@ public class TransactionController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response transferMoney(Transfer transaction) throws CustomException {
-        AccountService accountService = new AccountServiceImpl();
         List<Account> fromAccounts = accountService.getAccount(transaction.getFromAccount());
         List<Account> toAccounts = accountService.getAccount(transaction.getToAccount());
 

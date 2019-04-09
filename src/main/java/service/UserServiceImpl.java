@@ -4,21 +4,25 @@ import exception.CustomException;
 import model.User;
 import repository.UserRepository;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.List;
 
+@Singleton
 public class UserServiceImpl implements UserService {
 
-    public UserServiceImpl() { }
+    @Inject
+    UserRepository userRepository;
 
     public List<User> getAllUsers() throws CustomException {
-        return new UserRepository().getAllUsers();
+        return userRepository.getAllUsers();
     }
 
     public List<User> getUser(Long id) throws CustomException {
-        return new UserRepository().getUser(id);
+        return userRepository.getUser(id);
     }
 
     public void addUser(User user) throws CustomException {
-        new UserRepository().addUser(user);
+        userRepository.addUser(user);
     }
 }
