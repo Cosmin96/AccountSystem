@@ -1,5 +1,9 @@
 package model;
 
+import exception.CustomException;
+
+import javax.ws.rs.core.Response;
+
 public class Transfer extends Transaction {
     private Long fromAccount;
     private Long toAccount;
@@ -19,6 +23,9 @@ public class Transfer extends Transaction {
     public Transfer() {}
 
     public Long getFromAccount() {
+        if(fromAccount == null) {
+            throw new CustomException(Response.Status.FORBIDDEN, "Withdrawal account cannot be null");
+        }
         return fromAccount;
     }
 
@@ -27,6 +34,9 @@ public class Transfer extends Transaction {
     }
 
     public Long getToAccount() {
+        if(toAccount == null) {
+            throw new CustomException(Response.Status.FORBIDDEN, "Deposit account cannot be null");
+        }
         return toAccount;
     }
 

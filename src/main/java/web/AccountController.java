@@ -22,14 +22,20 @@ public class AccountController {
     @GET
     @Path("/user/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Account> getAccountsForUser(@PathParam("id") Long id) throws CustomException {
+    public List<Account> getAccountsForUser(@PathParam("id") Long id) {
+        if(id == null) {
+            throw new CustomException(Response.Status.BAD_REQUEST, "Please provide a valid user ID");
+        }
         return accountService.getAccounts(id);
     }
 
     @GET
     @Path("/get/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Account> getAccount(@PathParam("id") Long id) throws CustomException {
+    public List<Account> getAccount(@PathParam("id") Long id) {
+        if(id == null) {
+            throw new CustomException(Response.Status.BAD_REQUEST, "Please provide a valid account ID");
+        }
         return accountService.getAccount(id);
     }
 
@@ -37,7 +43,7 @@ public class AccountController {
     @Path("/add")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addAccount(Account account) throws CustomException {
+    public Response addAccount(Account account) {
         accountService.addAccount(account);
         return Response.ok().entity(
                 new CustomResponse("Account was added successfully to user " + account.getOwnerId())

@@ -1,5 +1,9 @@
 package model;
 
+import exception.CustomException;
+
+import javax.ws.rs.core.Response;
+
 public abstract class Transaction {
     private Long id;
     private Double amount;
@@ -23,6 +27,9 @@ public abstract class Transaction {
     }
 
     public Long getId() {
+        if(id == null) {
+            throw new CustomException(Response.Status.FORBIDDEN, "Transaction id cannot be null");
+        }
         return id;
     }
 
@@ -31,6 +38,9 @@ public abstract class Transaction {
     }
 
     public Double getAmount() {
+        if(amount == null) {
+            throw new CustomException(Response.Status.FORBIDDEN, "Account amount cannot be null");
+        }
         return amount;
     }
 
@@ -39,6 +49,9 @@ public abstract class Transaction {
     }
 
     public String getCurrency() {
+        if(currency == null) {
+            throw new CustomException(Response.Status.FORBIDDEN, "Account currency cannot be null");
+        }
         return currency;
     }
 
@@ -47,6 +60,9 @@ public abstract class Transaction {
     }
 
     public String getType() {
+        if(type == null) {
+            throw new CustomException(Response.Status.FORBIDDEN, "Transaction type cannot be null");
+        }
         return type;
     }
 

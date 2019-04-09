@@ -1,6 +1,9 @@
 package model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import exception.CustomException;
+
+import javax.ws.rs.core.Response;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Account {
@@ -25,6 +28,9 @@ public class Account {
     }
 
     public Long getId() {
+        if(id == null) {
+            throw new CustomException(Response.Status.FORBIDDEN, "Account id cannot be null");
+        }
         return id;
     }
 
@@ -33,6 +39,9 @@ public class Account {
     }
 
     public Double getBalance() {
+        if(balance == null) {
+            throw new CustomException(Response.Status.FORBIDDEN, "Balance cannot be null");
+        }
         return balance;
     }
 
@@ -41,6 +50,9 @@ public class Account {
     }
 
     public Long getOwnerId() {
+        if(ownerId == null) {
+            throw new CustomException(Response.Status.FORBIDDEN, "Owner id cannot be null");
+        }
         return ownerId;
     }
 
@@ -49,6 +61,9 @@ public class Account {
     }
 
     public String getCurrency() {
+        if(currency == null) {
+            throw new CustomException(Response.Status.FORBIDDEN, "Currency cannot be null");
+        }
         return currency;
     }
 

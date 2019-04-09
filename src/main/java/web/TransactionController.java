@@ -20,14 +20,17 @@ public class TransactionController {
     @GET
     @Path("/get/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Transaction> getTransactions(@PathParam("id") Long id) throws CustomException {
+    public List<Transaction> getTransactions(@PathParam("id") Long id) {
+        if(id == null) {
+            throw new CustomException(Response.Status.BAD_REQUEST, "Please provide a valid transaction ID");
+        }
         return accountService.getTransaction(id);
     }
 
     @GET
     @Path("/get")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Transaction> getAllTransactions() throws CustomException {
+    public List<Transaction> getAllTransactions() {
         return accountService.getAllTransactions();
     }
 
@@ -35,7 +38,14 @@ public class TransactionController {
     @Path("/withdraw")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response withdrawMoney(Withdrawal transaction) throws CustomException {
+    public Response withdrawMoney(Withdrawal transaction) {
+        if (transaction.getAmount() <= 0) {
+            throw new CustomException(Response.Status.BAD_REQUEST, "Withdrawal not possible because amount cannot be less than zero");
+        }
+        if (!transaction.getType().equals("Withdrawal")) {
+            throw new CustomException(Response.Status.BAD_REQUEST, "Transaction type must be Withdrawal");
+        }
+
         List<Account> accounts = accountService.getAccount(transaction.getFromAccount());
 
         if(accounts.size() == 0) {
@@ -53,7 +63,14 @@ public class TransactionController {
     @Path("/deposit")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response depositMoney(Deposit transaction) throws CustomException {
+    public Response depositMoney(Deposit transaction) {
+        if (transaction.getAmount() <= 0) {
+            throw new CustomException(Response.Status.BAD_REQUEST, "Deposit not possible because amount cannot be less than zero");
+        }
+        if (!transaction.getType().equals("Deposit")) {
+            throw new CustomException(Response.Status.BAD_REQUEST, "Transaction type must be Deposit");
+        }
+
         List<Account> accounts = accountService.getAccount(transaction.getToAccount());
 
         if(accounts.size() == 0) {
@@ -71,7 +88,17 @@ public class TransactionController {
     @Path("/transfer")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response transferMoney(Transfer transaction) throws CustomException {
+    public Response transferMoney(Transfer transaction) {
+        if (transaction.getFromAccount().equals(transaction.getToAccount())) {
+            throw new CustomException(Response.Status.FORBIDDEN, "Transfer not possible from account to itself");
+        }
+        if (transaction.getAmount() <= 0) {
+            throw new CustomException(Response.Status.BAD_REQUEST, "Transfer not possible because amount cannot be less than zero");
+        }
+        if (!transaction.getType().equals("Transfer")) {
+            throw new CustomException(Response.Status.BAD_REQUEST, "Transaction type must be Transfer");
+        }
+
         List<Account> fromAccounts = accountService.getAccount(transaction.getFromAccount());
         List<Account> toAccounts = accountService.getAccount(transaction.getToAccount());
 

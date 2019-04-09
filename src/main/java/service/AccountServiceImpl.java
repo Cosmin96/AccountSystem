@@ -4,6 +4,7 @@ import exception.CustomException;
 import model.*;
 import repository.AccountRepository;
 import repository.TransactionRepository;
+import repository.UserRepository;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -17,54 +18,71 @@ public class AccountServiceImpl implements AccountService {
     AccountRepository accountRepository;
     @Inject
     TransactionRepository transactionRepository;
+    @Inject
+    UserRepository userRepository;
 
-    public List<Account> getAccount(Long accountId) throws CustomException {
+    public List<Account> getAccount(Long accountId) {
         return accountRepository.getAccount(accountId);
     }
 
 
-    public List<Account> getAccounts(Long userId) throws CustomException {
+    public List<Account> getAccounts(Long userId) {
         return accountRepository.getAccounts(userId);
     }
 
-    public List<Transaction> getTransaction(Long transactionId) throws CustomException {
+    public List<Transaction> getTransaction(Long transactionId) {
         return transactionRepository.getTransaction(transactionId);
     }
 
-    public List<Transaction> getAllTransactions() throws CustomException {
+    public List<Transaction> getAllTransactions() {
         return transactionRepository.getAllTransactions();
     }
 
-    public void saveTransaction(Transaction transaction) throws CustomException {
+    public void saveTransaction(Transaction transaction) {
         transactionRepository.saveTransaction(transaction);
     }
 
-    public void addAccount(Account account) throws CustomException {
-        accountRepository.addAccount(account);
+    public Long addAccount(Account account) {
+        if(userRepository.getUser(account.getOwnerId()).size() == 0) {
+            throw new CustomException(Response.Status.FORBIDDEN, "Account cannot be created because user does not exist");
+        }
+        return accountRepository.addAccount(account);
     }
 
-    public void withdrawMoney(Account account, Withdrawal transaction) throws CustomException {
+    public void withdrawMoney(Account account, Withdrawal transaction) {
         if (transaction.getAmount() > account.getBalance()) {
             throw new CustomException(Response.Status.FORBIDDEN, "Withdrawal not possible due to insufficient funds");
         }
         if (!transaction.getCurrency().equals(account.getCurrency())) {
             throw new CustomException(Response.Status.FORBIDDEN, "Withdrawal not possible due to currency mismatch");
         }
+        if (verifyDigits(transaction.getAmount())) {
+            throw new CustomException(Response.Status.FORBIDDEN, "Transfer amount cannot have more than 2 decimal places");
+        }
         updateAccount(account.getId(), account.getBalance() - transaction.getAmount());
         saveTransaction(transaction);
     }
 
-    public void depositMoney(Account account, Deposit transaction) throws CustomException {
+    public void depositMoney(Account account, Deposit transaction) {
         if (!transaction.getCurrency().equals(account.getCurrency())) {
             account = lookForCorrectAccount(account.getOwnerId(), transaction.getCurrency());
+        }
+        if (verifyDigits(transaction.getAmount())) {
+            throw new CustomException(Response.Status.FORBIDDEN, "Transfer amount cannot have more than 2 decimal places");
         }
         updateAccount(account.getId(), account.getBalance() + transaction.getAmount());
         saveTransaction(transaction);
     }
 
-    public void transferMoney(Account fromAccount, Account toAccount, Transfer transaction) throws CustomException {
+    public void transferMoney(Account fromAccount, Account toAccount, Transfer transaction) {
         if (transaction.getAmount() > fromAccount.getBalance()) {
             throw new CustomException(Response.Status.FORBIDDEN, "Transfer not possible due to insufficient funds");
+        }
+        if (verifyDigits(transaction.getAmount())) {
+            throw new CustomException(Response.Status.FORBIDDEN, "Transfer amount cannot have more than 2 decimal places");
+        }
+        if (fromAccount.getOwnerId().equals(toAccount.getOwnerId()) && !fromAccount.getCurrency().equals(toAccount.getCurrency()))  {
+            throw new CustomException(Response.Status.FORBIDDEN, "Transfer not possible because exchange between currencies is not allowed");
         }
         if (!transaction.getCurrency().equals(fromAccount.getCurrency())) {
             throw new CustomException(Response.Status.FORBIDDEN, "Transfer not possible due to currency mismatch");
@@ -77,18 +95,28 @@ public class AccountServiceImpl implements AccountService {
         updateAccount(toAccount.getId(), toAccount.getBalance() + transaction.getAmount());
     }
 
-    private void updateAccount(Long id, Double amount) throws CustomException {
+    private boolean verifyDigits(Double amount) {
+        String amountValue = Double.toString(Math.abs(amount));
+        if(!amountValue.contains(".")) {
+            return false;
+        }
+        int integerPlaces = amountValue.indexOf('.');
+        int decimalPlaces = amountValue.length() - integerPlaces - 1;
+        return decimalPlaces > 2;
+    }
+
+    private void updateAccount(Long id, Double amount) {
         accountRepository.updateAccount(id, amount);
     }
 
-    private Account lookForCorrectAccount(Long id, String currency) throws CustomException {
+    private Account lookForCorrectAccount(Long id, String currency) {
         for (Account account: getAccounts(id)) {
             if (account.getCurrency().equals(currency)) {
                 return account;
             }
         }
         Account account = new Account(0d, id, currency);
-        addAccount(account);
+        account.setId(addAccount(account));
         return account;
     }
 }

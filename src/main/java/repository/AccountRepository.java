@@ -12,7 +12,7 @@ import java.util.List;
 
 public class AccountRepository {
 
-    public List<Account> getAccount(Long accountId) throws CustomException {
+    public List<Account> getAccount(Long accountId) {
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -30,7 +30,7 @@ public class AccountRepository {
         }
     }
 
-    public List<Account> getAccounts(Long userId) throws CustomException {
+    public List<Account> getAccounts(Long userId) {
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -48,7 +48,7 @@ public class AccountRepository {
         }
     }
 
-    public Long addAccount(Account account) throws CustomException {
+    public Long addAccount(Account account) {
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet generatedKeys = null;
@@ -75,7 +75,7 @@ public class AccountRepository {
         }
     }
 
-    public void updateAccount(Long id, Double balance) throws CustomException {
+    public void updateAccount(Long id, Double balance) {
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet generatedKeys = null;

@@ -1,6 +1,9 @@
 package model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import exception.CustomException;
+
+import javax.ws.rs.core.Response;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class User {
@@ -25,6 +28,9 @@ public class User {
     }
 
     public Long getId() {
+        if(id == null) {
+            throw new CustomException(Response.Status.FORBIDDEN, "User id cannot be null");
+        }
         return id;
     }
 
@@ -33,6 +39,9 @@ public class User {
     }
 
     public String getUsername() {
+        if(username == null) {
+            throw new CustomException(Response.Status.FORBIDDEN, "Username cannot be null");
+        }
         return username;
     }
 
@@ -41,6 +50,9 @@ public class User {
     }
 
     public String getFirstName() {
+        if(firstName == null) {
+            throw new CustomException(Response.Status.FORBIDDEN, "First name cannot be null");
+        }
         return firstName;
     }
 
@@ -49,6 +61,9 @@ public class User {
     }
 
     public String getLastName() {
+        if(lastName == null) {
+            throw new CustomException(Response.Status.FORBIDDEN, "Last name cannot be null");
+        }
         return lastName;
     }
 

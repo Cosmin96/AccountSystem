@@ -1,5 +1,9 @@
 package model;
 
+import exception.CustomException;
+
+import javax.ws.rs.core.Response;
+
 public class Withdrawal extends Transaction {
     private Long fromAccount;
 
@@ -17,6 +21,9 @@ public class Withdrawal extends Transaction {
     }
 
     public Long getFromAccount() {
+        if(fromAccount == null) {
+            throw new CustomException(Response.Status.FORBIDDEN, "Withdrawal account cannot be null");
+        }
         return fromAccount;
     }
 

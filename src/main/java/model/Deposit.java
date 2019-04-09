@@ -1,5 +1,9 @@
 package model;
 
+import exception.CustomException;
+
+import javax.ws.rs.core.Response;
+
 public class Deposit extends Transaction {
     private Long toAccount;
 
@@ -16,6 +20,9 @@ public class Deposit extends Transaction {
     public Deposit() {}
 
     public Long getToAccount() {
+        if(toAccount == null) {
+            throw new CustomException(Response.Status.FORBIDDEN, "Deposit account cannot be null");
+        }
         return toAccount;
     }
 

@@ -21,14 +21,17 @@ public class UserController {
     @GET
     @Path("/get/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<User> getUsers(@PathParam("id") Long id) throws CustomException {
+    public List<User> getUsers(@PathParam("id") Long id) {
+        if(id == null) {
+            throw new CustomException(Response.Status.INTERNAL_SERVER_ERROR, "Please provide a valid user id");
+        }
         return userService.getUser(id);
     }
 
     @GET
     @Path("/get")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<User> getAllUsers() throws CustomException {
+    public List<User> getAllUsers() {
         return userService.getAllUsers();
     }
 
@@ -36,7 +39,7 @@ public class UserController {
     @Path("/add")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addUser(User user) throws CustomException {
+    public Response addUser(User user) {
         userService.addUser(user);
         return Response.ok().entity(
                 new CustomResponse("User was added successfully")

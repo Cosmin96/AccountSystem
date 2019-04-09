@@ -14,15 +14,15 @@ public class UserServiceImpl implements UserService {
     @Inject
     UserRepository userRepository;
 
-    public List<User> getAllUsers() throws CustomException {
+    public List<User> getAllUsers() {
         return userRepository.getAllUsers();
     }
 
-    public List<User> getUser(Long id) throws CustomException {
+    public List<User> getUser(Long id) {
         return userRepository.getUser(id);
     }
 
-    public void addUser(User user) throws CustomException {
+    public void addUser(User user) {
         userRepository.addUser(user);
     }
 }

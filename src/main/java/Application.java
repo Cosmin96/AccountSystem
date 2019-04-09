@@ -1,25 +1,28 @@
 import config.ApplicationBinder;
+import exception.CustomException;
 import org.apache.commons.dbutils.DbUtils;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.glassfish.jersey.internal.inject.Custom;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletContainer;
 import org.h2.tools.RunScript;
 import repository.DatabaseConnection;
 
+import javax.ws.rs.core.Response;
 import java.io.*;
 import java.sql.Connection;
 import java.sql.SQLException;
 
 public class Application {
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         setupDB();
         startServer();
     }
 
-    private static void startServer() throws Exception {
+    private static void startServer() throws CustomException {
         ResourceConfig config = new ResourceConfig();
         config.packages("web");
         config.register(new ApplicationBinder());
@@ -35,13 +38,13 @@ public class Application {
             server.start();
             server.join();
         } catch (Exception e) {
-            System.out.println(e);
+            throw new CustomException(Response.Status.INTERNAL_SERVER_ERROR, "Server could not be started");
         } finally {
             server.destroy();
         }
     }
 
-    private static void setupDB() {
+    private static void setupDB() throws CustomException {
         Connection conn = null;
         try {
             conn = DatabaseConnection.getDBConnection();
@@ -51,9 +54,9 @@ public class Application {
                     .getFile();
             RunScript.execute(conn, new FileReader(setupFile));
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new CustomException(Response.Status.INTERNAL_SERVER_ERROR, "Connection to database could not be established");
         } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new CustomException(Response.Status.INTERNAL_SERVER_ERROR, "SQL setup file could not be found");
         } finally {
             DbUtils.closeQuietly(conn);
         }

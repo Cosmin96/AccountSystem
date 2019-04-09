@@ -12,7 +12,7 @@ import java.util.List;
 
 public class UserRepository {
 
-    public List<User> getAllUsers() throws CustomException {
+    public List<User> getAllUsers() {
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -29,7 +29,7 @@ public class UserRepository {
         }
     }
 
-    public List<User> getUser(Long id) throws CustomException {
+    public List<User> getUser(Long id) {
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -47,7 +47,7 @@ public class UserRepository {
         }
     }
 
-    public Long addUser(User user) throws CustomException {
+    public Long addUser(User user) {
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet generatedKeys = null;

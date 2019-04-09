@@ -15,7 +15,7 @@ import java.util.List;
 
 public class TransactionRepository {
 
-    public List<Transaction> getTransaction(Long transactionId) throws CustomException {
+    public List<Transaction> getTransaction(Long transactionId) {
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -33,7 +33,7 @@ public class TransactionRepository {
         }
     }
 
-    public List<Transaction> getAllTransactions() throws CustomException {
+    public List<Transaction> getAllTransactions() {
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -50,7 +50,7 @@ public class TransactionRepository {
         }
     }
 
-    public Long saveTransaction(Transaction transaction) throws CustomException {
+    public Long saveTransaction(Transaction transaction) {
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet generatedKeys = null;
