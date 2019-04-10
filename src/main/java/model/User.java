@@ -39,8 +39,8 @@ public class User {
     }
 
     public String getUsername() {
-        if(username == null) {
-            throw new CustomException(Response.Status.FORBIDDEN, "Username cannot be null");
+        if(username == null || username.equals("")) {
+            throw new CustomException(Response.Status.FORBIDDEN, "Username cannot be null or empty");
         }
         return username;
     }
@@ -50,8 +50,8 @@ public class User {
     }
 
     public String getFirstName() {
-        if(firstName == null) {
-            throw new CustomException(Response.Status.FORBIDDEN, "First name cannot be null");
+        if(firstName == null || firstName.equals("")) {
+            throw new CustomException(Response.Status.FORBIDDEN, "First name cannot be null or empty");
         }
         return firstName;
     }
@@ -61,8 +61,8 @@ public class User {
     }
 
     public String getLastName() {
-        if(lastName == null) {
-            throw new CustomException(Response.Status.FORBIDDEN, "Last name cannot be null");
+        if(lastName == null || lastName.equals("")) {
+            throw new CustomException(Response.Status.FORBIDDEN, "Last name cannot be null or empty");
         }
         return lastName;
     }

@@ -61,8 +61,8 @@ public class Account {
     }
 
     public String getCurrency() {
-        if(currency == null) {
-            throw new CustomException(Response.Status.FORBIDDEN, "Currency cannot be null");
+        if(currency == null || currency.equals("")) {
+            throw new CustomException(Response.Status.FORBIDDEN, "Currency cannot be null or empty");
         }
         return currency;
     }

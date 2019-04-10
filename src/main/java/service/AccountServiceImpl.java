@@ -59,7 +59,7 @@ public class AccountServiceImpl implements AccountService {
         if (verifyDigits(transaction.getAmount())) {
             throw new CustomException(Response.Status.FORBIDDEN, "Transfer amount cannot have more than 2 decimal places");
         }
-        updateAccount(account.getId(), account.getBalance() - transaction.getAmount());
+        updateAccount(account.getId(), Math.round((account.getBalance() - transaction.getAmount()) * 100) / 100d);
         saveTransaction(transaction);
     }
 
@@ -70,7 +70,7 @@ public class AccountServiceImpl implements AccountService {
         if (verifyDigits(transaction.getAmount())) {
             throw new CustomException(Response.Status.FORBIDDEN, "Transfer amount cannot have more than 2 decimal places");
         }
-        updateAccount(account.getId(), account.getBalance() + transaction.getAmount());
+        updateAccount(account.getId(), Math.round((account.getBalance() + transaction.getAmount()) * 100) / 100d);
         saveTransaction(transaction);
     }
 
@@ -91,8 +91,8 @@ public class AccountServiceImpl implements AccountService {
             toAccount = lookForCorrectAccount(toAccount.getOwnerId(), transaction.getCurrency());
         }
         saveTransaction(transaction);
-        updateAccount(fromAccount.getId(), fromAccount.getBalance() - transaction.getAmount());
-        updateAccount(toAccount.getId(), toAccount.getBalance() + transaction.getAmount());
+        updateAccount(fromAccount.getId(), Math.round((fromAccount.getBalance() - transaction.getAmount()) * 100) / 100d);
+        updateAccount(toAccount.getId(), Math.round((toAccount.getBalance() + transaction.getAmount()) * 100) / 100d);
     }
 
     private boolean verifyDigits(Double amount) {

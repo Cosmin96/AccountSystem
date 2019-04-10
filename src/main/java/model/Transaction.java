@@ -49,8 +49,8 @@ public abstract class Transaction {
     }
 
     public String getCurrency() {
-        if(currency == null) {
-            throw new CustomException(Response.Status.FORBIDDEN, "Account currency cannot be null");
+        if(currency == null && currency.equals("")) {
+            throw new CustomException(Response.Status.FORBIDDEN, "Account currency cannot be null or empty");
         }
         return currency;
     }
