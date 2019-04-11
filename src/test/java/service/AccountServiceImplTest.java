@@ -1,10 +1,7 @@
 package service;
 
 import exception.CustomException;
-import model.Account;
-import model.Transaction;
-import model.User;
-import model.Withdrawal;
+import model.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,6 +12,7 @@ import repository.AccountRepository;
 import repository.TransactionRepository;
 import repository.UserRepository;
 
+import javax.ws.rs.core.Response;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -35,25 +33,66 @@ public class AccountServiceImplTest {
     @InjectMocks
     AccountServiceImpl accountService;
 
-    List<Account> accounts;
-    Account account;
-    List<Transaction> transactions;
-    Transaction transaction;
-    List<User> users;
-    User user;
+    private List<User> users;
+    private User user;
+    private List<Account> accounts;
+    private Account account;
+    private Account account2;
+    private Account account3;
+    private Account account4;
+    private List<Transaction> transactions;
+    private Transaction transaction;
+    private Withdrawal withdrawal;
+    private Withdrawal negativeWithdrawal;
+    private Withdrawal impossibleWithdrawal;
+    private Withdrawal mismatchWithdrawal;
+    private Withdrawal decimalWithdrawal;
+    private Deposit deposit;
+    private Deposit accountDeposit;
+    private Deposit negativeDeposit;
+    private Deposit decimalDeposit;
+    private Transfer transfer;
+    private Transfer accountTransfer;
+    private Transfer sameTransfer;
+    private Transfer negativeTransfer;
+    private Transfer impossibleTransfer;
+    private Transfer decimalTransfer;
+    private Transfer exchangeTransfer;
+    private Transfer mismatchTransfer;
+
 
     @Before
     public void setUp() throws Exception {
-        account = new Account(1L, 0d, 1L, "GBP");
-        accounts = Arrays.asList(account, new Account(2L, 0D, 1L, "EUR"));
-
-        transaction = new Withdrawal(1L, 1L, 10D, "GBP");
-        transactions = Arrays.asList(transaction);
-
         users = Arrays.asList(
                 new User(1L, "Username", "First", "Last"),
                 new User(2L, "Username", "First", "Last"));
         user = new User(1L, "Username", "First", "Last");
+
+        account = new Account(1L, 1000d, 1L, "GBP");
+        account2 = new Account(2L, 1000d, 1L, "GBP");
+        account3 = new Account(3L, 1000d, 2L, "GBP");
+        account4 = new Account(4L, 1000d, 2L, "EUR");
+        accounts = Arrays.asList(account, new Account(2L, 0D, 1L, "EUR"));
+
+        transaction = new Withdrawal(1L, 1L, 10D, "GBP");
+        transactions = Collections.singletonList(transaction);
+        withdrawal = new Withdrawal(1L, 10D, "GBP");
+        negativeWithdrawal = new Withdrawal(2L, 1L, -10D, "GBP");
+        impossibleWithdrawal = new Withdrawal(2L, 1L, 10000D, "GBP");
+        mismatchWithdrawal = new Withdrawal(3L, 1L, 10D, "EUR");
+        decimalWithdrawal = new Withdrawal(4L, 1L, 10.002, "GBP");
+        deposit = new Deposit(5L, 1L, 10.3, "GBP");
+        accountDeposit = new Deposit(6L, 1L, 10.3, "EUR");
+        negativeDeposit = new Deposit(7L, 1L, -10.3, "GBP");
+        decimalDeposit = new Deposit(8L, 1L, 10.3123, "GBP");
+        transfer = new Transfer(9L, 1L, 3L, 10D, "GBP");
+        accountTransfer = new Transfer(10L, 4L, 1L, 10D, "EUR");
+        sameTransfer = new Transfer(11L, 1L, 1L, 10D, "GBP");
+        negativeTransfer = new Transfer(12L, 1L, 3L, -10D, "GBP");
+        impossibleTransfer = new Transfer(13L, 1L, 3L, 100000D, "GBP");
+        decimalTransfer = new Transfer(14L, 1L, 3L, 10.005, "GBP");
+        exchangeTransfer = new Transfer(15L, 3L, 4L, 10D, "GBP");
+        mismatchTransfer = new Transfer(16L, 1L, 3L, 10D, "EUR");
     }
 
     @Test
@@ -112,15 +151,115 @@ public class AccountServiceImplTest {
         accountService.addAccount(account);
     }
 
+
     @Test
-    public void withdrawMoney() {
+    public void withdrawMoneyShouldSuccessfullyWithdrawMoney() {
+        doNothing().when(accountRepository).updateAccount(any(Long.class), any(Double.class));
+
+        accountService.withdrawMoney(account, withdrawal);
+
+        verify(accountRepository, times(1)).updateAccount(1L, 990D);
+        verify(transactionRepository, times(1)).saveTransaction(withdrawal);
+    }
+
+    @Test(expected = CustomException.class)
+    public void withdrawMoneyShouldThrowExceptionIfAmountIsNegative() {
+        accountService.withdrawMoney(account, negativeWithdrawal);
+    }
+
+    @Test(expected = CustomException.class)
+    public void withdrawMoneyShouldThrowExceptionIfNotEnoughFunds() {
+        accountService.withdrawMoney(account, impossibleWithdrawal);
+    }
+
+    @Test(expected = CustomException.class)
+    public void withdrawMoneyShouldThrowExceptionIfCurrencyMismatch() {
+        accountService.withdrawMoney(account, mismatchWithdrawal);
+    }
+
+    @Test(expected = CustomException.class)
+    public void withdrawMoneyShouldThrowExceptionIfDecimalsAreWrong() {
+        accountService.withdrawMoney(account, decimalWithdrawal);
     }
 
     @Test
-    public void depositMoney() {
+    public void depositMoneyShouldSuccessfullyDepositMoney() {
+        doNothing().when(accountRepository).updateAccount(any(Long.class), any(Double.class));
+
+        accountService.depositMoney(account, deposit);
+
+        verify(accountRepository, times(1)).updateAccount(1L, 1010.3D);
+        verify(transactionRepository, times(1)).saveTransaction(deposit);
     }
 
     @Test
-    public void transferMoney() {
+    public void depositMoneyShouldCreateAccountInTransactionCurrency() {
+        doNothing().when(accountRepository).updateAccount(any(Long.class), any(Double.class));
+        when(userRepository.getUser(any(Long.class))).thenReturn(users);
+
+        accountService.depositMoney(account, accountDeposit);
+
+        verify(accountRepository, times(1)).addAccount(any(Account.class));
+    }
+
+    @Test(expected = CustomException.class)
+    public void depositMoneyShouldThrowExceptionIfAmountIsNegative() {
+        accountService.depositMoney(account, negativeDeposit);
+    }
+
+    @Test(expected = CustomException.class)
+    public void depositMoneyShouldThrowExceptionIfDecimalsAreWrong() {
+        accountService.depositMoney(account, decimalDeposit);
+    }
+
+    @Test
+    public void transferMoneyShouldSuccessfullyTransferMoney() {
+        doNothing().when(accountRepository).updateAccount(any(Long.class), any(Double.class));
+
+        accountService.transferMoney(account, account3, transfer);
+
+        verify(accountRepository, times(1)).updateAccount(1L, 990D);
+        verify(accountRepository, times(1)).updateAccount(3L, 1010D);
+        verify(transactionRepository, times(1)).saveTransaction(transfer);
+    }
+
+    @Test
+    public void transferMoneyShouldCreateAccountInTransactionCurrency() {
+        doNothing().when(accountRepository).updateAccount(any(Long.class), any(Double.class));
+        when(userRepository.getUser(any(Long.class))).thenReturn(users);
+
+        accountService.transferMoney(account4, account, accountTransfer);
+
+        verify(accountRepository, times(1)).addAccount(any(Account.class));
+    }
+
+    @Test(expected = CustomException.class)
+    public void transferMoneyShouldThrowExceptionIfSameAccount() {
+        accountService.transferMoney(account, account, sameTransfer);
+    }
+
+    @Test(expected = CustomException.class)
+    public void transferMoneyShouldThrowExceptionIfAmountIsNegative() {
+        accountService.transferMoney(account, account2, negativeTransfer);
+    }
+
+    @Test(expected = CustomException.class)
+    public void transferMoneyShouldThrowExceptionIfInsufficientFunds() {
+        accountService.transferMoney(account, account2, impossibleTransfer);
+    }
+
+    @Test(expected = CustomException.class)
+    public void transferMoneyShouldThrowExceptionIfDecimalsAreWrong() {
+        accountService.transferMoney(account, account3, decimalTransfer);
+    }
+
+    @Test(expected = CustomException.class)
+    public void transferMoneyShouldThrowExceptionIfExchangeCurrency() {
+        accountService.transferMoney(account3, account4, exchangeTransfer);
+    }
+
+    @Test(expected = CustomException.class)
+    public void transferMoneyShouldThrowExceptionIfCurrencyMismatch() {
+        accountService.transferMoney(account, account3, mismatchTransfer);
     }
 }

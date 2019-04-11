@@ -50,6 +50,12 @@ public class AccountServiceImpl implements AccountService {
     }
 
     public void withdrawMoney(Account account, Withdrawal transaction) {
+        if (transaction.getAmount() <= 0) {
+            throw new CustomException(Response.Status.BAD_REQUEST, "Withdrawal not possible because amount cannot be less than zero");
+        }
+        if (!transaction.getType().equals("Withdrawal")) {
+            throw new CustomException(Response.Status.BAD_REQUEST, "Transaction type must be Withdrawal");
+        }
         if (transaction.getAmount() > account.getBalance()) {
             throw new CustomException(Response.Status.FORBIDDEN, "Withdrawal not possible due to insufficient funds");
         }
@@ -64,6 +70,12 @@ public class AccountServiceImpl implements AccountService {
     }
 
     public void depositMoney(Account account, Deposit transaction) {
+        if (transaction.getAmount() <= 0) {
+            throw new CustomException(Response.Status.BAD_REQUEST, "Deposit not possible because amount cannot be less than zero");
+        }
+        if (!transaction.getType().equals("Deposit")) {
+            throw new CustomException(Response.Status.BAD_REQUEST, "Transaction type must be Deposit");
+        }
         if (!transaction.getCurrency().equals(account.getCurrency())) {
             account = lookForCorrectAccount(account.getOwnerId(), transaction.getCurrency());
         }
@@ -75,6 +87,15 @@ public class AccountServiceImpl implements AccountService {
     }
 
     public void transferMoney(Account fromAccount, Account toAccount, Transfer transaction) {
+        if (transaction.getFromAccount().equals(transaction.getToAccount())) {
+            throw new CustomException(Response.Status.FORBIDDEN, "Transfer not possible from account to itself");
+        }
+        if (transaction.getAmount() <= 0) {
+            throw new CustomException(Response.Status.BAD_REQUEST, "Transfer not possible because amount cannot be less than zero");
+        }
+        if (!transaction.getType().equals("Transfer")) {
+            throw new CustomException(Response.Status.BAD_REQUEST, "Transaction type must be Transfer");
+        }
         if (transaction.getAmount() > fromAccount.getBalance()) {
             throw new CustomException(Response.Status.FORBIDDEN, "Transfer not possible due to insufficient funds");
         }
