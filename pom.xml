@@ -17,6 +17,7 @@
         <mockitoVersion>2.26.0</mockitoVersion>
         <restassuredVersion>2.9.0</restassuredVersion>
         <mvnexecVersion>1.6.0</mvnexecVersion>
+        <jsonVersion>20180813</jsonVersion>
     </properties>
 
     <dependencies>
@@ -77,8 +78,11 @@
             <version>${restassuredVersion}</version>
             <scope>test</scope>
         </dependency>
-
-
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>${jsonVersion}</version>
+        </dependency>
     </dependencies>
 
     <build>
