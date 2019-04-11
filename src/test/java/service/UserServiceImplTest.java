@@ -57,7 +57,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void addUser() {
+    public void addUserShouldAddUserToDatabase() {
         userService.addUser(user);
         verify(userRepository, times(1)).addUser(user);
     }
