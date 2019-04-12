@@ -84,7 +84,7 @@ Endpoints
   * expects a JSON Account object with the following parameters and types:
   ~~~~~~~~~~~~~~~~~~~~
     {
-      ownerId: Long,
+      ownerId: Number,
       currency: String
     }
   ~~~~~~~~~~~~~~~~~~~~
@@ -104,10 +104,10 @@ Endpoints
   * expects a JSON Withdrawal object with the following parameters and types:
   ~~~~~~~~~~~~~~~~~~~~~~~~
     {
-      fromAccount: Long,
-      amount: Double,
+      fromAccount: Number,
+      amount: Number(at most two decimals),
       currency: String
-      type: String,
+      type: "Withdrawal",
     }
   ~~~~~~~~~~~~~~~~~~~~~~~~
   * the account field corresponds to the account ID for which the withdrawal is processed
@@ -119,10 +119,10 @@ Endpoints
   * expects a JSON Deposit object with the following parameters and types:
   ~~~~~~~~~~~~~~~~~~~~~~~~
     {
-      toAccount: Long,
-      amount: Double,
+      toAccount: Number,
+      amount: Number(at most two decimals),
       currency: String
-      type: String,
+      type: "Deposit",
     }
   ~~~~~~~~~~~~~~~~~~~~~~~~
   * the account field corresponds to the account ID for which the deposit is processed
@@ -134,11 +134,11 @@ Endpoints
   * expects a JSON Transfer object with the following parameters and types:
   ~~~~~~~~~~~~~~~~~~~~~~~~
     {
-      fromAccount: Long,
-      toAccount: Long,
-      amount: Double,
+      fromAccount: Number,
+      toAccount: Number,
+      amount: Number(at most two decimals),
       currency: String
-      type: String,
+      type: "Transfer",
     }
   ~~~~~~~~~~~~~~~~~~~~~~~~
   * the account fields corresponds to the account IDs for which the transfer is processed
@@ -194,26 +194,26 @@ Account: {
   currency: "GBP"
 }
 
-WithDrawal: {
+Withdrawal: {
   "fromAccount": 1,
-	"amount": 50,
-	"currency": "GBP",
-	"type": "Withdrawal"
+  "amount": 50,
+  "currency": "GBP",
+  "type": "Withdrawal"
 }
 
 Deposit: {
-	"toAccount": 1,
-	"amount": 1000,
-	"currency": "GBP",
-	"type": "Deposit"
+  "toAccount": 1,
+  "amount": 1000,
+  "currency": "GBP",
+  "type": "Deposit"
 }
 
 Transfer: {
-	"fromAccount": 1,
-	"toAccount": 2,
-	"amount": 10,
-	"currency": "GBP",
-	"type": "Transfer"
+  "fromAccount": 1,
+  "toAccount": 2,
+  "amount": 10,
+  "currency": "GBP",
+  "type": "Transfer"
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
