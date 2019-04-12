@@ -18,7 +18,6 @@ public class AccountController {
     @Inject
     AccountService accountService;
 
-
     @GET
     @Path("/user/{id}")
     @Produces(MediaType.APPLICATION_JSON)
