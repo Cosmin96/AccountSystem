@@ -20,29 +20,32 @@ Run the application
 There's 2 ways of starting the server:
 1. Using the Maven command
 
-To run using Maven, type the following command:
+To run using Maven, first of all make sure Maven is configured to work in the CLI and type the following commands:
 
 ~~~~~~~~~~~~~~~~
+mvn compile
 mvn exec:java 
 ~~~~~~~~~~~~~~~~
+
+The compile command is necessary only once to build all of the files and compile the classes. After that, the execute command will only be necessary to run the server (unless changes are made to the code).
 
 2. Using a Java IDE
 
 
-Using either a Eclipse or IntelliJ, run the main method in Application.java. This will start the application on port 8080.
+Using either a Eclipse or IntelliJ, import the Maven project and run the main method in Application.java. This will start the application on port 8080.
 
 
 Both methods will start the server, which will run a SQL setup file that will configure the database and some test data.
 
 Run the tests
 -------------
-To run the tests, make sure the application is running first, then, in a CLI do:
+To run the tests, **make sure the application is running first**, then, in a CLI do:
 
 ~~~~~~~~~~~~
 mvn verify 
 ~~~~~~~~~~~~
 
-This will run both unit and integration tests. However, the application needs to be running as RestAssured will need to hit the endpoints
+This will run both unit and integration tests. However, the application **needs to be running** as RestAssured will need to hit the endpoints
 
 
 Endpoints
