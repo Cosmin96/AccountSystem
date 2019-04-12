@@ -42,10 +42,10 @@ Run the tests
 To run the tests, **make sure the application is running first**, then, in a CLI do:
 
 ~~~~~~~~~~~~
-mvn verify 
+mvn test 
 ~~~~~~~~~~~~
 
-This will run both unit and integration tests. However, the application **needs to be running** as RestAssured will need to hit the endpoints
+This will run both unit and integration tests. However, the application **needs to be running** as RestAssured will need to hit the endpoints. Additionally, the tests can easily be run from a Java IDE.
 
 
 Endpoints
