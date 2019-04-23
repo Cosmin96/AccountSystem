@@ -7,6 +7,7 @@ import service.UserService;
 import service.UserServiceImpl;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -37,7 +38,7 @@ public class UserController {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addUser(User user) {
+    public Response addUser(@Valid User user) {
         userService.addUser(user);
         return Response.ok().entity(
                 new CustomResponse("User was added successfully")

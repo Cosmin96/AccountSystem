@@ -150,11 +150,6 @@ public class AccountServiceImplTest {
     }
 
     @Test(expected = CustomException.class)
-    public void withdrawMoneyShouldThrowExceptionIfAmountIsNegative() {
-        accountService.withdrawMoney(account, negativeWithdrawal);
-    }
-
-    @Test(expected = CustomException.class)
     public void withdrawMoneyShouldThrowExceptionIfNotEnoughFunds() {
         accountService.withdrawMoney(account, impossibleWithdrawal);
     }
@@ -190,11 +185,6 @@ public class AccountServiceImplTest {
     }
 
     @Test(expected = CustomException.class)
-    public void depositMoneyShouldThrowExceptionIfAmountIsNegative() {
-        accountService.depositMoney(account, negativeDeposit);
-    }
-
-    @Test(expected = CustomException.class)
     public void depositMoneyShouldThrowExceptionIfDecimalsAreWrong() {
         accountService.depositMoney(account, decimalDeposit);
     }
@@ -223,11 +213,6 @@ public class AccountServiceImplTest {
     @Test(expected = CustomException.class)
     public void transferMoneyShouldThrowExceptionIfSameAccount() {
         accountService.transferMoney(account, account, sameTransfer);
-    }
-
-    @Test(expected = CustomException.class)
-    public void transferMoneyShouldThrowExceptionIfAmountIsNegative() {
-        accountService.transferMoney(account, account2, negativeTransfer);
     }
 
     @Test(expected = CustomException.class)

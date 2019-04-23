@@ -2,9 +2,12 @@ package model;
 
 import exception.CustomException;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.core.Response;
 
 public class Deposit extends Transaction {
+    @NotNull(message = "Deposit account cannot be null")
     private Long toAccount;
 
     public Deposit(Long toAccount, Double amount, String currency) {
@@ -20,9 +23,6 @@ public class Deposit extends Transaction {
     public Deposit() {}
 
     public Long getToAccount() {
-        if(toAccount == null) {
-            throw new CustomException(Response.Status.FORBIDDEN, "Deposit account cannot be null");
-        }
         return toAccount;
     }
 

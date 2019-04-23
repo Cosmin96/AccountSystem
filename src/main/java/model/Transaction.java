@@ -2,12 +2,25 @@ package model;
 
 import exception.CustomException;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.core.Response;
 
 public abstract class Transaction {
+
     private Long id;
+
+    @Min(value = 0, message = "Transaction amount cannot be negative")
+    @NotNull(message = "Transaction amount cannot be null")
     private Double amount;
+
+    @NotNull(message = "Transaction currency cannot be null")
+    @NotBlank(message = "Transaction currency cannot be empty")
     private String currency;
+
+    @NotNull(message = "Transaction type cannot be null")
+    @NotBlank(message = "Transaction type cannot be empty")
     private String type;
 
     public Transaction() {
@@ -27,9 +40,6 @@ public abstract class Transaction {
     }
 
     public Long getId() {
-        if(id == null) {
-            throw new CustomException(Response.Status.FORBIDDEN, "Transaction id cannot be null");
-        }
         return id;
     }
 
@@ -38,9 +48,6 @@ public abstract class Transaction {
     }
 
     public Double getAmount() {
-        if(amount == null) {
-            throw new CustomException(Response.Status.FORBIDDEN, "Account amount cannot be null");
-        }
         return amount;
     }
 
@@ -49,9 +56,6 @@ public abstract class Transaction {
     }
 
     public String getCurrency() {
-        if(currency == null && currency.equals("")) {
-            throw new CustomException(Response.Status.FORBIDDEN, "Account currency cannot be null or empty");
-        }
         return currency;
     }
 
@@ -60,9 +64,6 @@ public abstract class Transaction {
     }
 
     public String getType() {
-        if(type == null) {
-            throw new CustomException(Response.Status.FORBIDDEN, "Transaction type cannot be null");
-        }
         return type;
     }
 

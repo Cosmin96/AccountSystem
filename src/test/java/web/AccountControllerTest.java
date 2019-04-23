@@ -79,7 +79,7 @@ public class AccountControllerTest {
     }
 
     @Test
-    public void addAccountShouldReturn403IfFieldsAreMissing() {
+    public void addAccountShouldReturn400IfFieldsAreMissing() {
         JSONObject user = new JSONObject()
                 .put("currency", "GBP");
 
@@ -88,6 +88,6 @@ public class AccountControllerTest {
                 .body(user.toString())
                 .when().post("/account")
                 .then()
-                .statusCode(403);
+                .statusCode(400);
     }
 }

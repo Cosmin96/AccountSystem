@@ -2,9 +2,11 @@ package model;
 
 import exception.CustomException;
 
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.core.Response;
 
 public class Withdrawal extends Transaction {
+    @NotNull(message = "Withdrawal account cannot be null")
     private Long fromAccount;
 
     public Withdrawal(Long fromAccount, Double amount, String currency) {
@@ -21,9 +23,6 @@ public class Withdrawal extends Transaction {
     }
 
     public Long getFromAccount() {
-        if(fromAccount == null) {
-            throw new CustomException(Response.Status.FORBIDDEN, "Withdrawal account cannot be null");
-        }
         return fromAccount;
     }
 

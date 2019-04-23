@@ -7,6 +7,7 @@ import service.AccountService;
 import service.AccountServiceImpl;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -41,7 +42,7 @@ public class AccountController {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addAccount(Account account) {
+    public Response addAccount(@Valid Account account) {
         accountService.addAccount(account);
         return Response.ok().entity(
                 new CustomResponse("Account was added successfully to user " + account.getOwnerId())

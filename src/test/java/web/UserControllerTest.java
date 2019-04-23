@@ -67,7 +67,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void addUserShouldReturn403IfFieldsMissing() {
+    public void addUserShouldReturn400IfFieldsMissing() {
         JSONObject user = new JSONObject()
                 .put("username", "Username")
                 .put("firstName", "First name");
@@ -77,6 +77,6 @@ public class UserControllerTest {
                 .body(user.toString())
                 .when().post("/user")
                 .then()
-                .statusCode(403);
+                .statusCode(400);
     }
 }
