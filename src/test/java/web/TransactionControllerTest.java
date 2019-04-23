@@ -2,8 +2,11 @@ package web;
 
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
+import config.Configuration;
 import org.json.JSONObject;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -14,10 +17,17 @@ import static org.junit.Assert.*;
 @RunWith(MockitoJUnitRunner.class)
 public class TransactionControllerTest {
 
-    @Before
-    public void setUp() {
+    @BeforeClass
+    public static void setUp() throws Exception {
+        Configuration.setupDB();
+        Configuration.startServer();
         RestAssured.baseURI="http://localhost";
         RestAssured.port=8080;
+    }
+
+    @AfterClass
+    public static void stopServer() throws Exception {
+        Configuration.stopServer();
     }
 
     @Test

@@ -139,13 +139,6 @@ public class AccountServiceImplTest {
         verify(accountRepository, times(1)).addAccount(account);
     }
 
-    @Test(expected = CustomException.class)
-    public void addAccountShouldThrowExceptionIfUserDoesNotExist() {
-        when(userRepository.getUser(account.getOwnerId())).thenReturn(user);
-        accountService.addAccount(account);
-    }
-
-
     @Test
     public void withdrawMoneyShouldSuccessfullyWithdrawMoney() {
         doNothing().when(accountRepository).updateAccount(any(Long.class), any(Double.class));

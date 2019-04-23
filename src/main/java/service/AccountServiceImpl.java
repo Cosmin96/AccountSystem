@@ -43,9 +43,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     public Long addAccount(Account account) {
-        if(userRepository.getUser(account.getOwnerId()) != null) {
-            throw new CustomException(Response.Status.FORBIDDEN, "Account cannot be created because user does not exist");
-        }
+        userRepository.getUser(account.getOwnerId());
         return accountRepository.addAccount(account);
     }
 

@@ -3,13 +3,16 @@ package model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import exception.CustomException;
 
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.core.Response;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Account {
     private Long id;
     private Double balance;
+    @NotNull
     private Long ownerId;
+    @NotNull
     private String currency;
 
     public Account() {}

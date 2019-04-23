@@ -2,21 +2,34 @@ package web;
 
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
+import config.Configuration;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.servlet.DefaultServlet;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
 import org.json.JSONObject;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
+import sun.security.krb5.Config;
 
 import static com.jayway.restassured.RestAssured.given;
 
-@RunWith(MockitoJUnitRunner.class)
 public class AccountControllerTest {
 
-    @Before
-    public void setUp() {
+
+    @BeforeClass
+    public static void setUp() throws Exception {
+        Configuration.setupDB();
+        Configuration.startServer();
         RestAssured.baseURI="http://localhost";
         RestAssured.port=8080;
+    }
+
+    @AfterClass
+    public static void stopServer() throws Exception {
+        Configuration.stopServer();
     }
 
     @Test
@@ -52,7 +65,7 @@ public class AccountControllerTest {
     }
 
     @Test
-    public void addAccountShouldReturn403IfUserDoesNotExist() {
+    public void addAccountShouldReturn404IfUserDoesNotExist() {
         JSONObject user = new JSONObject()
                 .put("ownerId", 0L)
                 .put("currency", "GBP");
@@ -62,13 +75,13 @@ public class AccountControllerTest {
                 .body(user.toString())
                 .when().post("/account")
                 .then()
-                .statusCode(403);
+                .statusCode(404);
     }
 
     @Test
     public void addAccountShouldReturn403IfFieldsAreMissing() {
         JSONObject user = new JSONObject()
-                .put("ownerId", 0L);
+                .put("currency", "GBP");
 
         given()
                 .contentType(ContentType.JSON)

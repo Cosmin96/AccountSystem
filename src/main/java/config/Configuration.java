@@ -3,6 +3,8 @@ package config;
 import exception.CustomException;
 import org.apache.commons.dbutils.DbUtils;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -24,6 +26,7 @@ import java.util.Properties;
 public class Configuration {
 
     private static Properties properties = new Properties();
+    private static Server server;
 
     static {
         try {
@@ -40,7 +43,7 @@ public class Configuration {
         return properties.getProperty(key);
     }
 
-    public static void startServer() throws CustomException {
+    public static void startServer() throws Exception {
         ResourceConfig config = new ResourceConfig();
         config.packages("web");
         config.packages("config");
@@ -48,19 +51,12 @@ public class Configuration {
         ServletHolder jerseyServlet
                 = new ServletHolder(new ServletContainer(config));
 
-        Server server = new Server(8080);
+        server = new Server(8080);
         ServletContextHandler context
                 = new ServletContextHandler(server, "/");
         context.addServlet(jerseyServlet, "/*");
 
-        try {
-            server.start();
-            server.join();
-        } catch (Exception e) {
-            throw new CustomException(Response.Status.INTERNAL_SERVER_ERROR, "Server could not be started");
-        } finally {
-            server.destroy();
-        }
+        server.start();
     }
 
     public static void setupDB() throws CustomException {
@@ -79,5 +75,9 @@ public class Configuration {
         } finally {
             DbUtils.closeQuietly(conn);
         }
+    }
+
+    public static void stopServer() throws Exception {
+        server.stop();
     }
 }
