@@ -31,7 +31,7 @@ public class AccountControllerTest {
     @Test
     public void getAccountShouldReturn200IfSuccessful() {
         given()
-                .when().get("/account/get/1")
+                .when().get("/account/1")
                 .then()
                 .statusCode(200)
                 .contentType(ContentType.JSON);
@@ -46,7 +46,7 @@ public class AccountControllerTest {
         given()
                 .contentType(ContentType.JSON)
                 .body(user.toString())
-                .when().post("/account/add")
+                .when().post("/account")
                 .then()
                 .statusCode(200);
     }
@@ -60,7 +60,7 @@ public class AccountControllerTest {
         given()
                 .contentType(ContentType.JSON)
                 .body(user.toString())
-                .when().post("/account/add")
+                .when().post("/account")
                 .then()
                 .statusCode(403);
     }
@@ -73,7 +73,7 @@ public class AccountControllerTest {
         given()
                 .contentType(ContentType.JSON)
                 .body(user.toString())
-                .when().post("/account/add")
+                .when().post("/account")
                 .then()
                 .statusCode(403);
     }

@@ -5,9 +5,9 @@ import model.*;
 import java.util.List;
 
 public interface AccountService {
-    public List<Account> getAccount(Long accountId);
-    public List<Account> getAccounts(Long userId);
-    public List<Transaction> getTransaction(Long transactionId);
+    public Account getAccount(Long accountId);
+    public List<Account> getAccountsForUser(Long userId);
+    public Transaction getTransaction(Long transactionId);
     public List<Transaction> getAllTransactions() ;
     public void saveTransaction(Transaction transaction);
     public Long addAccount(Account account);

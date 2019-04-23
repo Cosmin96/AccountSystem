@@ -25,13 +25,13 @@ public class AccountController {
         if(id == null) {
             throw new CustomException(Response.Status.BAD_REQUEST, "Please provide a valid user ID");
         }
-        return accountService.getAccounts(id);
+        return accountService.getAccountsForUser(id);
     }
 
     @GET
-    @Path("/get/{id}")
+    @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Account> getAccount(@PathParam("id") Long id) {
+    public Account getAccount(@PathParam("id") Long id) {
         if(id == null) {
             throw new CustomException(Response.Status.BAD_REQUEST, "Please provide a valid account ID");
         }
@@ -39,7 +39,6 @@ public class AccountController {
     }
 
     @POST
-    @Path("/add")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response addAccount(Account account) {

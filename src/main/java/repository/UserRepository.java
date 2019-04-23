@@ -21,7 +21,10 @@ public class UserRepository {
             conn = DatabaseConnection.getDBConnection();
             stmt = conn.prepareStatement(Configuration.getStringProperty("GET_ALL_USERS"));
             rs = stmt.executeQuery();
-            return queryForUser(rs, users);
+            while (rs.next()) {
+                users.add(new User(rs.getLong("Id"), rs.getString("Username"), rs.getString("FirstName"), rs.getString("LastName")));
+            }
+            return users;
         } catch (SQLException e) {
             throw new CustomException(Response.Status.BAD_REQUEST, "User query failed");
         } finally {
@@ -29,17 +32,23 @@ public class UserRepository {
         }
     }
 
-    public List<User> getUser(Long id) {
+    public User getUser(Long id) {
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
-        List<User> users = new ArrayList<User>();
+        User user = null;
         try {
             conn = DatabaseConnection.getDBConnection();
             stmt = conn.prepareStatement(Configuration.getStringProperty("GET_USER"));
             stmt.setString(1, id.toString());
             rs = stmt.executeQuery();
-            return queryForUser(rs, users);
+            while(rs.next()) {
+                user = new User(rs.getLong("Id"), rs.getString("Username"), rs.getString("FirstName"), rs.getString("LastName"));
+            }
+            if (user == null) {
+                throw new CustomException(Response.Status.NOT_FOUND, "User with id " + id + " could not be found");
+            }
+            return user;
         } catch (SQLException e) {
             throw new CustomException(Response.Status.BAD_REQUEST, "User query failed");
         } finally {
@@ -72,13 +81,5 @@ public class UserRepository {
         } finally {
             DbUtils.closeQuietly(conn, stmt, generatedKeys);
         }
-    }
-
-    private List<User> queryForUser(ResultSet rs, List<User> users) throws SQLException {
-        while (rs.next()) {
-            User user = new User(rs.getLong("Id"), rs.getString("Username"), rs.getString("FirstName"), rs.getString("LastName"));
-            users.add(user);
-        }
-        return users;
     }
 }

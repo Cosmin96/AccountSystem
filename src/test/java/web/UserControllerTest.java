@@ -26,7 +26,7 @@ public class UserControllerTest {
     @Test
     public void getUsersShouldReturn200IfSuccessful() {
         given()
-                .when().get("/user/get/1")
+                .when().get("/user/1")
                 .then()
                 .statusCode(200)
                 .contentType(ContentType.JSON);
@@ -35,7 +35,7 @@ public class UserControllerTest {
     @Test
     public void getAllUsersShouldReturn200IfSuccessful() {
         given()
-                .when().get("/user/get")
+                .when().get("/user")
                 .then()
                 .statusCode(200)
                 .contentType(ContentType.JSON);
@@ -51,7 +51,7 @@ public class UserControllerTest {
         given()
                 .contentType(ContentType.JSON)
                 .body(user.toString())
-                .when().post("/user/add")
+                .when().post("/user")
                 .then()
                 .statusCode(200);
     }
@@ -65,7 +65,7 @@ public class UserControllerTest {
         given()
                 .contentType(ContentType.JSON)
                 .body(user.toString())
-                .when().post("/user/add")
+                .when().post("/user")
                 .then()
                 .statusCode(403);
     }

@@ -23,7 +23,7 @@ public class TransactionControllerTest {
     @Test
     public void getTransactionsShouldReturn200IfSuccessful() {
         given()
-                .when().get("/transaction/get/1")
+                .when().get("/transaction/1")
                 .then()
                 .statusCode(200)
                 .contentType(ContentType.JSON);
@@ -32,7 +32,7 @@ public class TransactionControllerTest {
     @Test
     public void getAllTransactionsShouldReturn200IfSuccessful() {
         given()
-                .when().get("/transaction/get")
+                .when().get("/transaction")
                 .then()
                 .statusCode(200)
                 .contentType(ContentType.JSON);

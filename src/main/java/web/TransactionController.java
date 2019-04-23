@@ -18,9 +18,9 @@ public class TransactionController {
     AccountService accountService;
 
     @GET
-    @Path("/get/{id}")
+    @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Transaction> getTransactions(@PathParam("id") Long id) {
+    public Transaction getTransactions(@PathParam("id") Long id) {
         if(id == null) {
             throw new CustomException(Response.Status.BAD_REQUEST, "Please provide a valid transaction ID");
         }
@@ -28,7 +28,6 @@ public class TransactionController {
     }
 
     @GET
-    @Path("/get")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Transaction> getAllTransactions() {
         return accountService.getAllTransactions();
@@ -39,16 +38,9 @@ public class TransactionController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response withdrawMoney(Withdrawal transaction) {
-        List<Account> accounts = accountService.getAccount(transaction.getFromAccount());
-
-        if(accounts.size() == 0) {
-            throw new CustomException(Response.Status.BAD_REQUEST, "Withdrawal not possible because account does not exist");
-        }
-
-        Account account = accounts.get(0);
-        accountService.withdrawMoney(account, transaction);
+        accountService.withdrawMoney(accountService.getAccount(transaction.getFromAccount()), transaction);
         return Response.ok().entity(
-                new CustomResponse("Withdrawal from account " + account.getId() + " was successful")
+                new CustomResponse("Withdrawal from account " + transaction.getFromAccount() + " was successful")
         ).build();
     }
 
@@ -57,16 +49,9 @@ public class TransactionController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response depositMoney(Deposit transaction) {
-        List<Account> accounts = accountService.getAccount(transaction.getToAccount());
-
-        if(accounts.size() == 0) {
-            throw new CustomException(Response.Status.BAD_REQUEST, "Deposit not possible because account does not exist");
-        }
-
-        Account account = accounts.get(0);
-        accountService.depositMoney(account, transaction);
+        accountService.depositMoney(accountService.getAccount(transaction.getToAccount()), transaction);
         return Response.ok().entity(
-                new CustomResponse("Deposit to account " + account.getId() + " was successful")
+                new CustomResponse("Deposit to account " + transaction.getToAccount() + " was successful")
         ).build();
     }
 
@@ -75,23 +60,13 @@ public class TransactionController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response transferMoney(Transfer transaction) {
-        List<Account> fromAccounts = accountService.getAccount(transaction.getFromAccount());
-        List<Account> toAccounts = accountService.getAccount(transaction.getToAccount());
-
-        if(fromAccounts.size() == 0) {
-            throw new CustomException(Response.Status.BAD_REQUEST, "Transfer not possible because withdrawal account does not exist");
-        }
-        if(toAccounts.size() == 0) {
-            throw new CustomException(Response.Status.BAD_REQUEST, "Transfer not possible because deposit account does not exist");
-        }
-
-        Account fromAccount = fromAccounts.get(0);
-        Account toAccount = toAccounts.get(0);
-
-        accountService.transferMoney(fromAccount, toAccount, transaction);
+        accountService.transferMoney(
+                accountService.getAccount(transaction.getFromAccount()),
+                accountService.getAccount(transaction.getToAccount()),
+                transaction);
 
         return Response.ok().entity(
-                new CustomResponse("Transfer from account " + fromAccount.getId() + " was successful")
+                new CustomResponse("Transfer from account " + transaction.getFromAccount() + " was successful")
         ).build();
     }
 }

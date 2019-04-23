@@ -19,9 +19,9 @@ public class UserController {
     UserService userService;
 
     @GET
-    @Path("/get/{id}")
+    @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<User> getUsers(@PathParam("id") Long id) {
+    public User getUsers(@PathParam("id") Long id) {
         if(id == null) {
             throw new CustomException(Response.Status.INTERNAL_SERVER_ERROR, "Please provide a valid user id");
         }
@@ -29,14 +29,12 @@ public class UserController {
     }
 
     @GET
-    @Path("/get")
     @Produces(MediaType.APPLICATION_JSON)
     public List<User> getAllUsers() {
         return userService.getAllUsers();
     }
 
     @POST
-    @Path("/add")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response addUser(User user) {

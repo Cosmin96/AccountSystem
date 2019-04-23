@@ -15,17 +15,23 @@ import java.util.List;
 
 public class TransactionRepository {
 
-    public List<Transaction> getTransaction(Long transactionId) {
+    public Transaction getTransaction(Long transactionId) {
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
-        List<Transaction> transactions = new ArrayList<Transaction>();
+        Transaction transaction = null;
         try {
             conn = DatabaseConnection.getDBConnection();
             stmt = conn.prepareStatement(Configuration.getStringProperty("GET_TRANSACTION"));
             stmt.setString(1, transactionId.toString());
             rs = stmt.executeQuery();
-            return queryForTransaction(rs, transactions);
+            while (rs.next()) {
+                transaction = queryForTransaction(rs);
+            }
+            if(transaction == null) {
+                throw new CustomException(Response.Status.NOT_FOUND, "Transaction with id " + transactionId + " was not found");
+            }
+            return transaction;
         } catch (SQLException e) {
             throw new CustomException(Response.Status.BAD_REQUEST, "Transaction query failed");
         } finally {
@@ -42,7 +48,10 @@ public class TransactionRepository {
             conn = DatabaseConnection.getDBConnection();
             stmt = conn.prepareStatement(Configuration.getStringProperty("GET_ALL_TRANSACTIONS"));
             rs = stmt.executeQuery();
-            return queryForTransaction(rs, transactions);
+            while(rs.next()) {
+                transactions.add(queryForTransaction(rs));
+            }
+            return transactions;
         } catch (SQLException e) {
             throw new CustomException(Response.Status.BAD_REQUEST, "Transaction query failed");
         } finally {
@@ -76,36 +85,33 @@ public class TransactionRepository {
         }
     }
 
-    private List<Transaction> queryForTransaction(ResultSet rs, List<Transaction> transactions) throws SQLException {
-        while (rs.next()) {
-            String type = rs.getString("Type");
-            Transaction transaction = null;
-            if(type.equals("Deposit")) {
-                transaction = new Deposit(
-                        rs.getLong("Id"),
-                        rs.getLong("ToAccount"),
-                        rs.getDouble("Amount"),
-                        rs.getString("Currency")
-                );
-            } else if(type.equals("Withdrawal")) {
-                transaction = new Withdrawal(
-                        rs.getLong("Id"),
-                        rs.getLong("FromAccount"),
-                        rs.getDouble("Amount"),
-                        rs.getString("Currency")
-                );
-            } else if(type.equals("Transfer")){
-                transaction = new Transfer(
-                        rs.getLong("Id"),
-                        rs.getLong("FromAccount"),
-                        rs.getLong("ToAccount"),
-                        rs.getDouble("Amount"),
-                        rs.getString("Currency")
-                );
-            }
-            transactions.add(transaction);
+    private Transaction queryForTransaction(ResultSet rs) throws SQLException {
+        Transaction transaction = null;
+        String type = rs.getString("Type");
+        if (type.equals("Deposit")) {
+            transaction = new Deposit(
+                    rs.getLong("Id"),
+                    rs.getLong("ToAccount"),
+                    rs.getDouble("Amount"),
+                    rs.getString("Currency")
+            );
+        } else if (type.equals("Withdrawal")) {
+            transaction = new Withdrawal(
+                    rs.getLong("Id"),
+                    rs.getLong("FromAccount"),
+                    rs.getDouble("Amount"),
+                    rs.getString("Currency")
+            );
+        } else if (type.equals("Transfer")) {
+            transaction = new Transfer(
+                    rs.getLong("Id"),
+                    rs.getLong("FromAccount"),
+                    rs.getLong("ToAccount"),
+                    rs.getDouble("Amount"),
+                    rs.getString("Currency")
+            );
         }
-        return transactions;
+        return transaction;
     }
 
     private void prepareQuery(Transaction transaction, PreparedStatement stmt) throws SQLException {

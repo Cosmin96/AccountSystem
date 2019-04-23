@@ -12,17 +12,24 @@ import java.util.List;
 
 public class AccountRepository {
 
-    public List<Account> getAccount(Long accountId) {
+    public Account getAccount(Long accountId) {
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
-        List<Account> accounts = new ArrayList<Account>();
+        Account account = null;
         try {
             conn = DatabaseConnection.getDBConnection();
             stmt = conn.prepareStatement(Configuration.getStringProperty("GET_ACCOUNT"));
             stmt.setString(1, accountId.toString());
             rs = stmt.executeQuery();
-            return queryForAccount(rs, accounts);
+            while (rs.next()) {
+                account = new Account(rs.getLong("Id"), rs.getDouble("Balance"), rs.getLong("OwnerID"), rs.getString("Currency"));
+            }
+            if(account == null) {
+                throw new CustomException(Response.Status.NOT_FOUND, "Account with id " + accountId + " was not found");
+            }
+
+            return account;
         } catch (SQLException e) {
             throw new CustomException(Response.Status.BAD_REQUEST, "Account query failed");
         } finally {
@@ -40,7 +47,11 @@ public class AccountRepository {
             stmt = conn.prepareStatement(Configuration.getStringProperty("GET_USER_ACCOUNTS"));
             stmt.setString(1, userId.toString());
             rs = stmt.executeQuery();
-            return queryForAccount(rs, accounts);
+            while (rs.next()) {
+                Account account = new Account(rs.getLong("Id"), rs.getDouble("Balance"), rs.getLong("OwnerID"), rs.getString("Currency"));
+                accounts.add(account);
+            }
+            return accounts;
         } catch (SQLException e) {
             throw new CustomException(Response.Status.BAD_REQUEST, "Account query failed");
         } finally {
@@ -94,13 +105,5 @@ public class AccountRepository {
             DbUtils.closeQuietly(conn);
             DbUtils.closeQuietly(stmt);
         }
-    }
-
-    private List<Account> queryForAccount(ResultSet rs, List<Account> accounts) throws SQLException {
-        while (rs.next()) {
-            Account account = new Account(rs.getLong("Id"), rs.getDouble("Balance"), rs.getLong("OwnerID"), rs.getString("Currency"));
-            accounts.add(account);
-        }
-        return accounts;
     }
 }

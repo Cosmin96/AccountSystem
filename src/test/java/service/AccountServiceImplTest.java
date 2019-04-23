@@ -33,7 +33,6 @@ public class AccountServiceImplTest {
     @InjectMocks
     AccountServiceImpl accountService;
 
-    private List<User> users;
     private User user;
     private List<Account> accounts;
     private Account account;
@@ -63,9 +62,6 @@ public class AccountServiceImplTest {
 
     @Before
     public void setUp() throws Exception {
-        users = Arrays.asList(
-                new User(1L, "Username", "First", "Last"),
-                new User(2L, "Username", "First", "Last"));
         user = new User(1L, "Username", "First", "Last");
 
         account = new Account(1L, 1000d, 1L, "GBP");
@@ -97,17 +93,16 @@ public class AccountServiceImplTest {
 
     @Test
     public void getAccountShouldReturnAccount() {
-        when(accountRepository.getAccount(1L)).thenReturn(Collections.singletonList(account));
-        List<Account> accountList = accountService.getAccount(1L);
+        when(accountRepository.getAccount(1L)).thenReturn(account);
+        Account account = accountService.getAccount(1L);
 
-        assertEquals(accountList.size(), 1);
-        assertEquals(accountList.get(0).getId(), (Long) 1L);
+        assertEquals(account.getId(), (Long) 1L);
     }
 
     @Test
     public void getAccountsShouldReturnAllAccountsForUser() {
         when(accountRepository.getAccounts(1L)).thenReturn(accounts);
-        List<Account> accountList = accountService.getAccounts(1L);
+        List<Account> accountList = accountService.getAccountsForUser(1L);
 
         assertEquals(accountList.size(), 2);
         assertEquals(accountList.get(0).getId(), (Long) 1L);
@@ -116,11 +111,10 @@ public class AccountServiceImplTest {
 
     @Test
     public void getTransactionShouldReturnTransaction() {
-        when(transactionRepository.getTransaction(1L)).thenReturn(Collections.singletonList(transaction));
-        List<Transaction> transactionList = accountService.getTransaction(1L);
+        when(transactionRepository.getTransaction(1L)).thenReturn(transaction);
+        Transaction transaction = accountService.getTransaction(1L);
 
-        assertEquals(transactionList.size(), 1);
-        assertEquals(transactionList.get(0).getId(), (Long) 1L);
+        assertEquals(transaction.getId(), (Long) 1L);
     }
 
     @Test
@@ -140,14 +134,14 @@ public class AccountServiceImplTest {
 
     @Test
     public void addAccountShouldSaveAccount() {
-        when(userRepository.getUser(account.getOwnerId())).thenReturn(Collections.singletonList(user));
+        when(userRepository.getUser(account.getOwnerId())).thenReturn(user);
         accountService.addAccount(account);
         verify(accountRepository, times(1)).addAccount(account);
     }
 
     @Test(expected = CustomException.class)
     public void addAccountShouldThrowExceptionIfUserDoesNotExist() {
-        when(userRepository.getUser(account.getOwnerId())).thenReturn(Collections.<User>emptyList());
+        when(userRepository.getUser(account.getOwnerId())).thenReturn(user);
         accountService.addAccount(account);
     }
 
@@ -195,7 +189,7 @@ public class AccountServiceImplTest {
     @Test
     public void depositMoneyShouldCreateAccountInTransactionCurrency() {
         doNothing().when(accountRepository).updateAccount(any(Long.class), any(Double.class));
-        when(userRepository.getUser(any(Long.class))).thenReturn(users);
+        when(userRepository.getUser(any(Long.class))).thenReturn(user);
 
         accountService.depositMoney(account, accountDeposit);
 
@@ -226,7 +220,7 @@ public class AccountServiceImplTest {
     @Test
     public void transferMoneyShouldCreateAccountInTransactionCurrency() {
         doNothing().when(accountRepository).updateAccount(any(Long.class), any(Double.class));
-        when(userRepository.getUser(any(Long.class))).thenReturn(users);
+        when(userRepository.getUser(any(Long.class))).thenReturn(user);
 
         accountService.transferMoney(account4, account, accountTransfer);
 

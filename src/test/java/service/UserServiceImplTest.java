@@ -49,11 +49,10 @@ public class UserServiceImplTest {
 
     @Test
     public void getUserShouldReturnUser() {
-        when(userRepository.getUser(1L)).thenReturn(Collections.singletonList(user));
-        List<User> userList = userService.getUser(1L);
+        when(userRepository.getUser(1L)).thenReturn(user);
+        User user = userService.getUser(1L);
 
-        assertEquals(userList.size(), 1);
-        assertEquals(userList.get(0).getId(), (Long) 1L);
+        assertEquals(user.getId(), (Long) 1L);
     }
 
     @Test

@@ -21,16 +21,16 @@ public class AccountServiceImpl implements AccountService {
     @Inject
     UserRepository userRepository;
 
-    public List<Account> getAccount(Long accountId) {
+    public Account getAccount(Long accountId) {
         return accountRepository.getAccount(accountId);
     }
 
 
-    public List<Account> getAccounts(Long userId) {
+    public List<Account> getAccountsForUser(Long userId) {
         return accountRepository.getAccounts(userId);
     }
 
-    public List<Transaction> getTransaction(Long transactionId) {
+    public Transaction getTransaction(Long transactionId) {
         return transactionRepository.getTransaction(transactionId);
     }
 
@@ -43,7 +43,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     public Long addAccount(Account account) {
-        if(userRepository.getUser(account.getOwnerId()).size() == 0) {
+        if(userRepository.getUser(account.getOwnerId()) != null) {
             throw new CustomException(Response.Status.FORBIDDEN, "Account cannot be created because user does not exist");
         }
         return accountRepository.addAccount(account);
@@ -131,7 +131,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     private Account lookForCorrectAccount(Long id, String currency) {
-        for (Account account: getAccounts(id)) {
+        for (Account account: getAccountsForUser(id)) {
             if (account.getCurrency().equals(currency)) {
                 return account;
             }
