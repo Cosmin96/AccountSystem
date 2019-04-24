@@ -1,18 +1,24 @@
 package model;
 
-import exception.CustomException;
+import validators.CurrencyMatch;
+import validators.DecimalConstraint;
+import validators.SufficientFunds;
+import validators.ValidType;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.core.Response;
 
+@ValidType
+@CurrencyMatch
+@SufficientFunds
 public abstract class Transaction {
 
     private Long id;
 
     @Min(value = 0, message = "Transaction amount cannot be negative")
     @NotNull(message = "Transaction amount cannot be null")
+    @DecimalConstraint
     private Double amount;
 
     @NotNull(message = "Transaction currency cannot be null")

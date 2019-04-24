@@ -149,21 +149,6 @@ public class AccountServiceImplTest {
         verify(transactionRepository, times(1)).saveTransaction(withdrawal);
     }
 
-    @Test(expected = CustomException.class)
-    public void withdrawMoneyShouldThrowExceptionIfNotEnoughFunds() {
-        accountService.withdrawMoney(account, impossibleWithdrawal);
-    }
-
-    @Test(expected = CustomException.class)
-    public void withdrawMoneyShouldThrowExceptionIfCurrencyMismatch() {
-        accountService.withdrawMoney(account, mismatchWithdrawal);
-    }
-
-    @Test(expected = CustomException.class)
-    public void withdrawMoneyShouldThrowExceptionIfDecimalsAreWrong() {
-        accountService.withdrawMoney(account, decimalWithdrawal);
-    }
-
     @Test
     public void depositMoneyShouldSuccessfullyDepositMoney() {
         doNothing().when(accountRepository).updateAccount(any(Long.class), any(Double.class));
@@ -182,11 +167,6 @@ public class AccountServiceImplTest {
         accountService.depositMoney(account, accountDeposit);
 
         verify(accountRepository, times(1)).addAccount(any(Account.class));
-    }
-
-    @Test(expected = CustomException.class)
-    public void depositMoneyShouldThrowExceptionIfDecimalsAreWrong() {
-        accountService.depositMoney(account, decimalDeposit);
     }
 
     @Test
@@ -208,30 +188,5 @@ public class AccountServiceImplTest {
         accountService.transferMoney(account4, account, accountTransfer);
 
         verify(accountRepository, times(1)).addAccount(any(Account.class));
-    }
-
-    @Test(expected = CustomException.class)
-    public void transferMoneyShouldThrowExceptionIfSameAccount() {
-        accountService.transferMoney(account, account, sameTransfer);
-    }
-
-    @Test(expected = CustomException.class)
-    public void transferMoneyShouldThrowExceptionIfInsufficientFunds() {
-        accountService.transferMoney(account, account2, impossibleTransfer);
-    }
-
-    @Test(expected = CustomException.class)
-    public void transferMoneyShouldThrowExceptionIfDecimalsAreWrong() {
-        accountService.transferMoney(account, account3, decimalTransfer);
-    }
-
-    @Test(expected = CustomException.class)
-    public void transferMoneyShouldThrowExceptionIfExchangeCurrency() {
-        accountService.transferMoney(account3, account4, exchangeTransfer);
-    }
-
-    @Test(expected = CustomException.class)
-    public void transferMoneyShouldThrowExceptionIfCurrencyMismatch() {
-        accountService.transferMoney(account, account3, mismatchTransfer);
     }
 }

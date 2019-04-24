@@ -1,10 +1,12 @@
 package model;
 
-import exception.CustomException;
+import validators.CurrencyExchange;
+import validators.DiffAccount;
 
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.core.Response;
 
+@DiffAccount
+@CurrencyExchange
 public class Transfer extends Transaction {
     @NotNull(message = "Withdrawal account cannot be null")
     private Long fromAccount;
