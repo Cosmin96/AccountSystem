@@ -97,7 +97,7 @@ public class TransactionControllerTest {
     }
 
     @Test
-    public void withdrawMoneyShouldReturn403IfInsufficientFunds() {
+    public void withdrawMoneyShouldReturn400IfInsufficientFunds() {
         JSONObject withdrawal = new JSONObject()
                 .put("fromAccount", 1L)
                 .put("amount", 1000000000)
@@ -109,11 +109,11 @@ public class TransactionControllerTest {
                 .body(withdrawal.toString())
                 .when().post("/transaction/withdraw")
                 .then()
-                .statusCode(403);
+                .statusCode(400);
     }
 
     @Test
-    public void withdrawMoneyShouldReturn403IfCurrencyMismatch() {
+    public void withdrawMoneyShouldReturn400IfCurrencyMismatch() {
         JSONObject withdrawal = new JSONObject()
                 .put("fromAccount", 1L)
                 .put("amount", 10)
@@ -125,11 +125,11 @@ public class TransactionControllerTest {
                 .body(withdrawal.toString())
                 .when().post("/transaction/withdraw")
                 .then()
-                .statusCode(403);
+                .statusCode(400);
     }
 
     @Test
-    public void withdrawMoneyShouldReturn403IfTooManyDecimals() {
+    public void withdrawMoneyShouldReturn400IfTooManyDecimals() {
         JSONObject withdrawal = new JSONObject()
                 .put("fromAccount", 1L)
                 .put("amount", 10.0043)
@@ -141,7 +141,7 @@ public class TransactionControllerTest {
                 .body(withdrawal.toString())
                 .when().post("/transaction/withdraw")
                 .then()
-                .statusCode(403);
+                .statusCode(400);
     }
 
     @Test
@@ -193,7 +193,7 @@ public class TransactionControllerTest {
     }
 
     @Test
-    public void depositMoneyShouldReturn403IfTooManyDecimals() {
+    public void depositMoneyShouldReturn400IfTooManyDecimals() {
         JSONObject deposit = new JSONObject()
                 .put("toAccount", 1L)
                 .put("amount", 10.003)
@@ -205,7 +205,7 @@ public class TransactionControllerTest {
                 .body(deposit.toString())
                 .when().post("/transaction/deposit")
                 .then()
-                .statusCode(403);
+                .statusCode(400);
     }
 
     @Test
@@ -226,7 +226,7 @@ public class TransactionControllerTest {
     }
 
     @Test
-    public void transferMoneyShouldReturn403IfAccountToItself() {
+    public void transferMoneyShouldReturn400IfAccountToItself() {
         JSONObject transfer = new JSONObject()
                 .put("fromAccount", 1L)
                 .put("toAccount", 1L)
@@ -239,7 +239,7 @@ public class TransactionControllerTest {
                 .body(transfer.toString())
                 .when().post("/transaction/transfer")
                 .then()
-                .statusCode(403);
+                .statusCode(400);
     }
 
     @Test
@@ -277,7 +277,7 @@ public class TransactionControllerTest {
     }
 
     @Test
-    public void transferMoneyShouldReturn403IfInsufficientFunds() {
+    public void transferMoneyShouldReturn400IfInsufficientFunds() {
         JSONObject transfer = new JSONObject()
                 .put("fromAccount", 1L)
                 .put("toAccount", 3L)
@@ -290,11 +290,11 @@ public class TransactionControllerTest {
                 .body(transfer.toString())
                 .when().post("/transaction/transfer")
                 .then()
-                .statusCode(403);
+                .statusCode(400);
     }
 
     @Test
-    public void transferMoneyShouldReturn403IfTooManyDecimals() {
+    public void transferMoneyShouldReturn400IfTooManyDecimals() {
         JSONObject transfer = new JSONObject()
                 .put("fromAccount", 1L)
                 .put("toAccount", 3L)
@@ -307,11 +307,11 @@ public class TransactionControllerTest {
                 .body(transfer.toString())
                 .when().post("/transaction/transfer")
                 .then()
-                .statusCode(403);
+                .statusCode(400);
     }
 
     @Test
-    public void transferMoneyShouldReturn403IfExchangeOfCurrencies() {
+    public void transferMoneyShouldReturn400IfExchangeOfCurrencies() {
         JSONObject transfer = new JSONObject()
                 .put("fromAccount", 1L)
                 .put("toAccount", 2L)
@@ -324,11 +324,11 @@ public class TransactionControllerTest {
                 .body(transfer.toString())
                 .when().post("/transaction/transfer")
                 .then()
-                .statusCode(403);
+                .statusCode(400);
     }
 
     @Test
-    public void transferMoneyShouldReturn403IfCurrencyMismatch() {
+    public void transferMoneyShouldReturn400IfCurrencyMismatch() {
         JSONObject transfer = new JSONObject()
                 .put("fromAccount", 1L)
                 .put("toAccount", 3L)
@@ -341,6 +341,6 @@ public class TransactionControllerTest {
                 .body(transfer.toString())
                 .when().post("/transaction/transfer")
                 .then()
-                .statusCode(403);
+                .statusCode(400);
     }
 }

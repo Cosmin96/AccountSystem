@@ -1,11 +1,17 @@
 package model;
 
-import exception.CustomException;
+import validators.CurrencyExchange;
+import validators.DiffAccount;
 
-import javax.ws.rs.core.Response;
+import javax.validation.constraints.NotNull;
 
+@DiffAccount
+@CurrencyExchange
 public class Transfer extends Transaction {
+    @NotNull(message = "Withdrawal account cannot be null")
     private Long fromAccount;
+
+    @NotNull(message = "Deposit account cannot be null")
     private Long toAccount;
 
     public Transfer(Long fromAccount, Long toAccount, Double amount, String currency) {
@@ -23,9 +29,6 @@ public class Transfer extends Transaction {
     public Transfer() {}
 
     public Long getFromAccount() {
-        if(fromAccount == null) {
-            throw new CustomException(Response.Status.FORBIDDEN, "Withdrawal account cannot be null");
-        }
         return fromAccount;
     }
 
@@ -34,9 +37,6 @@ public class Transfer extends Transaction {
     }
 
     public Long getToAccount() {
-        if(toAccount == null) {
-            throw new CustomException(Response.Status.FORBIDDEN, "Deposit account cannot be null");
-        }
         return toAccount;
     }
 

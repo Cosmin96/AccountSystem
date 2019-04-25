@@ -3,13 +3,25 @@ package model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import exception.CustomException;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.core.Response;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class User {
+
     private Long id;
+
+    @NotNull(message = "Username cannot be null")
+    @NotBlank(message = "Username cannot be empty")
     private String username;
+
+    @NotNull(message = "First name cannot be null")
+    @NotBlank(message = "First name cannot be empty")
     private String firstName;
+
+    @NotNull(message = "Last name cannot be null")
+    @NotBlank(message = "Last name cannot be empty")
     private String lastName;
 
     public User(){}

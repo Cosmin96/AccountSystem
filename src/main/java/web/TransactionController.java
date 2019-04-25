@@ -6,6 +6,7 @@ import service.AccountService;
 import service.AccountServiceImpl;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -37,7 +38,7 @@ public class TransactionController {
     @Path("/withdraw")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response withdrawMoney(Withdrawal transaction) {
+    public Response withdrawMoney(@Valid Withdrawal transaction) {
         accountService.withdrawMoney(accountService.getAccount(transaction.getFromAccount()), transaction);
         return Response.ok().entity(
                 new CustomResponse("Withdrawal from account " + transaction.getFromAccount() + " was successful")
@@ -48,7 +49,7 @@ public class TransactionController {
     @Path("/deposit")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response depositMoney(Deposit transaction) {
+    public Response depositMoney(@Valid Deposit transaction) {
         accountService.depositMoney(accountService.getAccount(transaction.getToAccount()), transaction);
         return Response.ok().entity(
                 new CustomResponse("Deposit to account " + transaction.getToAccount() + " was successful")
@@ -59,7 +60,7 @@ public class TransactionController {
     @Path("/transfer")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response transferMoney(Transfer transaction) {
+    public Response transferMoney(@Valid Transfer transaction) {
         accountService.transferMoney(
                 accountService.getAccount(transaction.getFromAccount()),
                 accountService.getAccount(transaction.getToAccount()),

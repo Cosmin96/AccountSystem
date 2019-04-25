@@ -8,6 +8,7 @@ import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.server.ServerProperties;
 import org.glassfish.jersey.servlet.ServletContainer;
 import org.h2.tools.RunScript;
 import repository.DatabaseConnection;
@@ -47,6 +48,7 @@ public class Configuration {
         ResourceConfig config = new ResourceConfig();
         config.packages("web");
         config.packages("config");
+        config.property(ServerProperties.BV_SEND_ERROR_IN_RESPONSE, true);
         config.register(new ApplicationBinder());
         ServletHolder jerseyServlet
                 = new ServletHolder(new ServletContainer(config));
