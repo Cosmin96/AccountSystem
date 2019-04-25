@@ -39,27 +39,29 @@ Both methods will start the server, which will run a SQL setup file that will co
 
 Run the tests
 -------------
-To run the tests, **make sure the application is running first**, then, in a CLI do:
+To run the tests, in a CLI do either of the commands:
 
 ~~~~~~~~~~~~
-mvn test 
+mvn test
+mvn verify
+mvn package
 ~~~~~~~~~~~~
 
-This will run both unit and integration tests. However, the application **needs to be running** as RestAssured will need to hit the endpoints. Additionally, the tests can easily be run from a Java IDE.
+This will run both unit and integration tests. Additionally, the tests can easily be run from a Java IDE. The package command will run the tests, but also produce a .jar file for deployment purposes
 
 
 Endpoints
 ---------
 
 **1. User**
-* **GET /user/get/{id}**
-  * returns a JSON list containing user with the specified id
-  * returns an empty list if no user exists for the given id
+* **GET /user/{id}**
+  * returns a JSON object containing the user with the specified id
+  * returns a 404 NOT FOUND response if no user exists for the given id
 
-* **GET /user/get**
+* **GET /user**
   * returns a JSON list with all existing users
 
-* **POST /user/add**
+* **POST /user**
   * adds a user to the database
   * expects a JSON User object with the following parameters and types:
   ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -71,15 +73,15 @@ Endpoints
   ~~~~~~~~~~~~~~~~~~~~~~~~
 
 **2. Account**
-* **GET /account/get/{id}**
-  * returns a JSON list containing the account with the specified id
-  * returns an empty list if no account exists for the given id
+* **GET /account/{id}**
+  * returns a JSON object containing the account with the specified id
+  * returns a 404 NOT FOUND response if no account exists for the given id
   
 * **GET /account/user/{id}**
   * returns a JSON list containing all accounts for the specified user id
   * returns an empty list if no accounts exists for the given user id
 
-* **POST /account/add**
+* **POST /account**
   * adds an account to the database
   * expects a JSON Account object with the following parameters and types:
   ~~~~~~~~~~~~~~~~~~~~
@@ -92,12 +94,12 @@ Endpoints
 
 
 **3. Transaction**
-* **GET /transaction/get**
+* **GET /transaction**
   * returns a JSON list containing all account transactions
   
-* **GET /transaction/get/{id}**
-  * returns a JSON list containing the transaction with the specified id
-  * returns an empty list if the transaction is not found
+* **GET /transaction/{id}**
+  * returns a JSON object containing the transaction with the specified id
+  * returns a 404 NOT FOUND response if the transaction is not found
 
 * **POST /transaction/withdraw**
   * processes a withdrawal from an account
@@ -178,6 +180,7 @@ The status codes that can be returned are:
 * **200 OK** - returns when a request was successful
 * **400 Bad Request** - returns when the request cannot be processed correctly (e.g. when a provided ID doesn't exist in the database)
 * **403 Forbidden** - returns when a main rule regarding transactions is broken (e.g. amount is negative)
+* **404 Not Found** - returns when an entry in the database cannot be found for a given id (e.g. user does not exist for given user id)
 * **500 Internal Server Error** - this is usually returned when the server cannot start or querries fail to execute
 
 Examples of request body objects
@@ -221,4 +224,5 @@ Potential future improvements
 -----------------------------
 * implement logic for currency exchange using an external API
 * implement support to only use existing currencies and not invalid, innexistent ones (possibly through an enum)
+* implement a queueing system (potentially using RabbitMQ) that allows transactions to be queued before and executed in a priority (e.g. deposits before withdrawals)
 * add more functionality
