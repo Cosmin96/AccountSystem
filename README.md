@@ -224,5 +224,5 @@ Potential future improvements
 -----------------------------
 * implement logic for currency exchange using an external API
 * implement support to only use existing currencies and not invalid, innexistent ones (possibly through an enum)
-* implement a queueing system (potentially using RabbitMQ) that allows transactions to be queued before and executed in a priority (e.g. deposits before withdrawals)
+* implement a queueing system (potentially using RabbitMQ) that allows transactions to be queued before and executed in a priority (e.g. deposits before withdrawals), as well as a scheduled executor that handles the transactions in the queue at a fixed interval of time
 * add more functionality
